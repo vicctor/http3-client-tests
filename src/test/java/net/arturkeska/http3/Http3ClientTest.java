@@ -104,6 +104,11 @@ class Http3ClientTest {
         shouldGetFile(flupkeCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
+    @Test
+    void callUsingRestClient() throws InterruptedException {
+        shouldGetFile(restClientHttp3Call, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
+    }
+
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
         try (var scope = new RateLimittedScope<Integer>(parallel)) {
