@@ -11,9 +11,7 @@ import reactor.netty.http.Http3SslContextSpec;
 import reactor.netty.http.HttpProtocol;
 import reactor.netty.http.client.HttpClient;
 
-import javax.net.ssl.SSLContext;
 import java.time.Duration;
-import java.util.ResourceBundle;
 
 @SpringBootApplication
 @Configuration
@@ -44,6 +42,7 @@ public class Http3Application {
 	@Bean
 	RestClient http3RestClientLocal(RestClient.Builder builder, DefaultSslBundleRegistry defaultSslBundleRegistry) {
 		var bundle = defaultSslBundleRegistry.getBundle("client");
+
 
 		Http3SslContextSpec sslContextSpec = Http3SslContextSpec.forClient()
 				.configure(spec -> spec.trustManager(bundle.getManagers().getTrustManagerFactory()));

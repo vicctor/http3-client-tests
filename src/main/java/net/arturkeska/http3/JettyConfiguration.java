@@ -52,7 +52,6 @@ public class JettyConfiguration implements WebServerFactoryCustomizer<JettyServl
         @Override
         protected void doStart() throws Exception
         {
-            LOG.info("HTTP/3+QUIC support is experimental and not suited for production use.");
             super.doStart();
             altSvcHttpField = new PreEncodedHttpField(HttpHeader.ALT_SVC, String.format("h3=\":%d\"", getLocalPort()));
         }

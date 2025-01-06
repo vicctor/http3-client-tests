@@ -86,7 +86,7 @@ class Http3ClientTest {
 
     @Test
     void callLocal() throws InterruptedException {
-        shouldGetFile(restClientHttp3LocalCall, "https://localhost:8443/foo", 4, 1000, 1);
+        shouldGetFile(restClientHttp3LocalCall, "https://localhost:8443/foo", 4, 50, 1);
     }
 
     @Test
