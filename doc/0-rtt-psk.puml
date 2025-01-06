@@ -1,0 +1,21 @@
+@startuml
+title Connection resuming
+
+participant Client
+participant Server
+
+group 0-RTT
+Client -> Server: Initial Packet (ClientHello)\n*KeyShare]
+Server -> Client: Initial Packet (ServerHello)\*KeyShare\n*certificate\n*Signature\n*PSK
+Client -> Server: Finished
+end
+group 1-RTT
+Client -> Server: 1-RTT Data
+Server -> Client: 1-RTT Data
+end
+group Resume
+Client -> Server: Initial Packet (ClientHello)\n*encrypted(using PSK)]
+Server -> Client: optional new PSK
+end
+
+@enduml
