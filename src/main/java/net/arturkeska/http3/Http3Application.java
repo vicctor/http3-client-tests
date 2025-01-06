@@ -27,14 +27,7 @@ public class Http3Application {
 	RestClient http3RestClient(RestClient.Builder builder, DefaultSslBundleRegistry defaultSslBundleRegistry) {
 
 		HttpClient client =
-				HttpClient.create()
-						// Configure HTTP/3 protocol
-						.protocol(HttpProtocol.HTTP3)
-						// Configure HTTP/3 settings
-						.http3Settings(spec ->
-								spec.idleTimeout(Duration.ofSeconds(5))
-								.maxData(10_000_000)
-								.maxStreamDataBidirectionalLocal(1_000_000));
+				createHTTP3Client(HttpProtocol.HTTP3);
 
 		return builder.requestFactory(new ReactorNettyClientRequestFactory(client)).build();
 	}
@@ -43,33 +36,31 @@ public class Http3Application {
 	RestClient http3RestClientLocal(RestClient.Builder builder, DefaultSslBundleRegistry defaultSslBundleRegistry) {
 		var bundle = defaultSslBundleRegistry.getBundle("client");
 
-
 		Http3SslContextSpec sslContextSpec = Http3SslContextSpec.forClient()
 				.configure(spec -> spec.trustManager(bundle.getManagers().getTrustManagerFactory()));
+
 		HttpClient client =
-				HttpClient.create()
-						// Configure HTTP/3 protocol
-						.protocol(HttpProtocol.HTTP3)
-						// Configure HTTP/3 settings
-						.http3Settings(spec ->
-								spec.idleTimeout(Duration.ofSeconds(5))
-										.maxData(10_000_000)
-										.maxStreamDataBidirectionalLocal(1_000_000))
+				createHTTP3Client(HttpProtocol.HTTP3)
 						.secure(spec -> spec.sslContext(sslContextSpec));
 
 		return builder.requestFactory(new ReactorNettyClientRequestFactory(client)).build();
 	}
 
+	private static HttpClient createHTTP3Client(HttpProtocol http3) {
+		return HttpClient.create()
+				// Configure HTTP/3 protocol
+				.protocol(http3)
+				// Configure HTTP/3 settings
+				.http3Settings(spec ->
+						spec.idleTimeout(Duration.ofSeconds(5))
+								.maxData(10_000_000)
+								.maxStreamDataBidirectionalLocal(1_000_000));
+	}
+
 	@Bean
 	RestClient http2RestClient(RestClient.Builder builder) {
 		HttpClient client =
-				HttpClient.create()
-						// Configure HTTP/3 protocol
-						.protocol(HttpProtocol.H2)
-						// Configure HTTP/3 settings
-						.http3Settings(spec -> spec.idleTimeout(Duration.ofSeconds(5))
-								.maxData(10_000_000)
-								.maxStreamDataBidirectionalLocal(1_000_000));
+				createHTTP3Client(HttpProtocol.H2);
 
 		return builder.requestFactory(new ReactorNettyClientRequestFactory(client)).build();
 	}

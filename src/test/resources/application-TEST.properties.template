@@ -1,0 +1,12 @@
+#network provider description
+test.environment.network.provider="plus/lte/3g/microtic"
+# measured network speed on test conputer using speedtest
+test.environment.network.speed.ping=18
+# (MB/s)
+test.environment.network.speed.download=70
+# (MB/s)
+test.environment.network.speed.upload=19
+# last socket in change to router adatper speed (MB/s)
+test.environment.adapter.socket=100
+# iwconfig bitrate (Mb/s)
+test.environment.adapter.bitrate=780

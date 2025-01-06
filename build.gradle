@@ -46,6 +46,8 @@ dependencies {
 
 	implementation group: 'tech.kwik', name: 'flupke', version: '0.5.3'
 
+	implementation 'com.google.code.gson:gson:2.11.0'
+
 	testImplementation('org.springframework.boot:spring-boot-starter-test')
 }
 

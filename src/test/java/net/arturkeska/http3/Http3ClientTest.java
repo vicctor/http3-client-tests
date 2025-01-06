@@ -1,7 +1,10 @@
 package net.arturkeska.http3;
 
+import net.arturkeska.http3.recording.Recorder;
+import net.arturkeska.http3.support.RateLimittedScope;
 import net.luminis.http3.Http3ClientBuilder;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,6 +12,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
+import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
@@ -19,52 +24,42 @@ import java.net.http.HttpResponse;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.StructuredTaskScope;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @SpringBootTest(useMainMethod = SpringBootTest.UseMainMethod.ALWAYS
 ,classes = Http3Application.class)
+@TestPropertySource("classpath:application-TEST.properties")
 class Http3ClientTest {
-
-    private static final int FILE_SIZE = 145390;
-    private static final int PAGE_SIZE = 1256;
-
-    @Autowired
-    RestClient http3RestClient;
-    @Autowired
-    RestClient http2RestClient;
-    @Autowired
-    RestClient http3RestClientLocal;
-
-    HttpClient.Builder flupkeClientBuilder = new Http3ClientBuilder();
-    HttpClient flupkeClient = flupkeClientBuilder.build();
-
-
+    private static final int FILE_149KB_SIZE = 145390;
+    private static final int PAGE_1KB_SIZE = 1256;
     private final static String FILE_149KB ="https://www.gstatic.com/webp/gallery3/3_webp_ll.webp";
-    private final static String PAGE = "https://example.com/";
+    private final static String PAGE_1KB = "https://example.com/";
 
-    enum HttpClientType {
-        REST_CLIENT_HTTP2,
-        REST_CLIENT_HTTP3,
-        FLUPKE;
-    }
+    @Autowired
+    private RestClient http3RestClient;
+    @Autowired
+    private RestClient http2RestClient;
+    @Autowired
+    private RestClient http3RestClientLocal;
+    @Autowired
+    private  Recorder recorder;
+
+    private HttpClient.Builder flupkeClientBuilder = new Http3ClientBuilder();
+    private HttpClient flupkeClient = flupkeClientBuilder.build();
 
     private Map<HttpClientType, Function<String, Integer>> handers;
-
 
     private static Stream<Arguments> httpComparisonCases() {
         return Arrays.stream(HttpClientType.values())
                 .flatMap(type -> Stream.of(
-                        Arguments.of(type, PAGE, PAGE_SIZE, 10, 1),
-                        Arguments.of(type, PAGE, PAGE_SIZE, 100, 10),
-                        Arguments.of(type, PAGE, PAGE_SIZE, 100, 100),
-                        Arguments.of(type, FILE_149KB, FILE_SIZE, 10, 1),
-                        Arguments.of(type, FILE_149KB, FILE_SIZE, 100, 10),
-                        Arguments.of(type, FILE_149KB, FILE_SIZE, 100, 100))
+                        Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 10, 1),
+                        Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 10),
+                        Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 100),
+                        Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 10, 1),
+                        Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 10),
+                        Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 100))
                 );
     }
 
@@ -77,11 +72,26 @@ class Http3ClientTest {
         }};
     }
 
+    @AfterEach
+    void done() {
+        recorder.save();
+    }
+
     @ParameterizedTest
     @MethodSource("httpComparisonCases")
     void callTest(HttpClientType protocol, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
+        var stopwatch = new StopWatch();
+        stopwatch.start();
         var handler = handers.get(protocol);
-        shouldGetFile(handler, uri, expectedResponseSize, repeat, parallel);
+        try {
+            shouldGetFile(handler, uri, expectedResponseSize, repeat, parallel);
+            stopwatch.stop();
+            recorder.logExecutionRecord(protocol.toString(), uri, expectedResponseSize, repeat, parallel, true, stopwatch);
+        } catch (Exception ex) {
+            stopwatch.stop();
+            recorder.logExecutionRecord(protocol.toString(), uri, expectedResponseSize, repeat, parallel, false, stopwatch);
+            throw ex;
+        }
     }
 
     @Test
@@ -91,17 +101,16 @@ class Http3ClientTest {
 
     @Test
     void callusingFlupke() throws InterruptedException {
-        shouldGetFile(flupkeCall, PAGE, PAGE_SIZE, 1, 1);
+        shouldGetFile(flupkeCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
-        try (var scope = new OrderedSuccessfulScope<Integer>(parallel)) {
+        try (var scope = new RateLimittedScope<Integer>(parallel)) {
             var executions = IntStream.range(0, repeat)
                     .mapToObj(n -> scope.fork(() -> getResourceCall.apply(uri)))
                     .toList();
-            scope
-                    .join();
+            scope.join();
             var len = executions.stream().map(e -> e.get())
                     .mapToInt(i->i)
                     .sum();
@@ -109,20 +118,20 @@ class Http3ClientTest {
         }
     }
 
-    Integer callHttp3(RestClient client, String uri) {
+    Integer requestUsingRestClient(RestClient client, String uri) {
         var body = client.get()
                 .uri(uri)
                 .retrieve()
                 .body(String.class);
 
-        return body.length();
+        return body != null ? body.length() : 0;
     }
 
-    Function<String, Integer> restClientHttp2Call = uri -> callHttp3(http2RestClient, uri);
+    Function<String, Integer> restClientHttp2Call = uri -> requestUsingRestClient(http2RestClient, uri);
 
-    Function<String, Integer> restClientHttp3Call = uri -> callHttp3(http3RestClient, uri);
+    Function<String, Integer> restClientHttp3Call = uri -> requestUsingRestClient(http3RestClient, uri);
 
-    Function<String, Integer> restClientHttp3LocalCall = uri -> callHttp3(http3RestClientLocal, uri);
+    Function<String, Integer> restClientHttp3LocalCall = uri -> requestUsingRestClient(http3RestClientLocal, uri);
 
     Function<String, Integer> flupkeCall = uri -> {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
@@ -134,32 +143,9 @@ class Http3ClientTest {
         }
     };
 
-    public static class OrderedSuccessfulScope<T> extends StructuredTaskScope<T> {
-
-        private final Semaphore pool;
-
-        public OrderedSuccessfulScope(int limit) {
-            pool = new Semaphore(limit);
-        }
-
-        @Override
-        protected void handleComplete(Subtask<? extends T> subtask) {
-            pool.release();
-            // System.out.println("RELEASE: " + subtask + " on " + Thread.currentThread().getName());
-        }
-
-        @Override
-        public <U extends T> Subtask<U> fork(Callable<? extends U> task) {
-            try {
-                // System.out.println("WAIT: semPermits = " + pool.availablePermits());
-                pool.acquire();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-
-            var subTask = super.fork(task);
-            // System.out.println("FORK: subtask = " + subTask);
-            return (Subtask<U>) subTask;
-        }
+    enum HttpClientType {
+        REST_CLIENT_HTTP2,
+        REST_CLIENT_HTTP3,
+        FLUPKE;
     }
 }
