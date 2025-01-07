@@ -1,10 +1,5 @@
 package net.arturkeska.http3.recording;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StopWatch;
 
@@ -13,24 +8,25 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
 
 @Service
 public class Recorder {
     private final String recordId = UUID.randomUUID().toString();
-    private EnvironmentDescription environmentDescription;
-    private final Collection<ExecutionRecord> records = new ArrayDeque<>();
+    private final JsonSerializer jsonSerializer;
+    private final EnvironmentDescription environmentDescription;
+    private final Collection<ExecutionRecord> records = new ArrayList<>();
 
-    public Recorder(EnvironmentDescription environment) {
+    public Recorder(EnvironmentDescription environment, JsonSerializer jsonSerializer) {
         this.environmentDescription = environment;
+        this.jsonSerializer = jsonSerializer;
     }
 
     public void save() {
         try (var fileOut = new FileOutputStream("doc/records/%s.json".formatted(recordId), false)) {
-            fileOut.write((gson().toJson(records) + "\n").getBytes(StandardCharsets.UTF_8));
+            fileOut.write((jsonSerializer.serialize(records) + "\n").getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -49,23 +45,6 @@ public class Recorder {
                 stopwatch.getTotalTimeNanos()
         );
         records.add(event);
-    }
-
-    private Gson gson() {
-        return new GsonBuilder()
-                .registerTypeAdapter(ZonedDateTime.class, new TypeAdapter<ZonedDateTime>() {
-                    @Override
-                    public void write(JsonWriter out, ZonedDateTime value) throws IOException {
-                        out.value(value.toString());
-                    }
-
-                    @Override
-                    public ZonedDateTime read(JsonReader in) throws IOException {
-                        return ZonedDateTime.parse(in.nextString());
-                    }
-                })
-                .enableComplexMapKeySerialization()
-                .create();
     }
 
 }

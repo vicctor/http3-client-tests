@@ -6,6 +6,7 @@ import net.luminis.http3.Http3ClientBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -52,15 +53,17 @@ class Http3ClientTest {
     private Map<HttpClientType, Function<String, Integer>> handers;
 
     private static Stream<Arguments> httpComparisonCases() {
-        return Arrays.stream(HttpClientType.values())
-                .flatMap(type -> Stream.of(
+        var cases = Arrays.stream(HttpClientType.values())
+                .flatMap(type ->
+                        Stream.of(
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 10, 1),
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 10),
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 100),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 10, 1),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 10),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 100))
-                );
+                ).toList();
+        return IntStream.range(0, 5).mapToObj(i -> cases.stream()).flatMap(o -> o);
     }
 
     @BeforeEach
