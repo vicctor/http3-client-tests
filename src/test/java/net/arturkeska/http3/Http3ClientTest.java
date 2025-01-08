@@ -16,15 +16,18 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClient;
+import reactor.netty.http.client.HttpClientResponse;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -45,6 +48,8 @@ class Http3ClientTest {
     @Autowired
     private RestClient http3RestClientLocal;
     @Autowired
+    private reactor.netty.http.client.HttpClient http3Client;
+    @Autowired
     private  Recorder recorder;
 
     private HttpClient.Builder flupkeClientBuilder = new Http3ClientBuilder();
@@ -54,6 +59,7 @@ class Http3ClientTest {
 
     private static Stream<Arguments> httpComparisonCases() {
         var cases = Arrays.stream(HttpClientType.values())
+                .sorted((a,b)-> new SecureRandom().nextInt())
                 .flatMap(type ->
                         Stream.of(
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 10, 1),
@@ -63,7 +69,7 @@ class Http3ClientTest {
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 10),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 100))
                 ).toList();
-        return IntStream.range(0, 5).mapToObj(i -> cases.stream()).flatMap(o -> o);
+        return IntStream.range(0, 1).mapToObj(i -> cases.stream()).flatMap(o -> o);
     }
 
     @BeforeEach
@@ -71,6 +77,7 @@ class Http3ClientTest {
         handers = new HashMap<>() {{
             put(HttpClientType.REST_CLIENT_HTTP2, restClientHttp2Call);
             put(HttpClientType.REST_CLIENT_HTTP3, restClientHttp3Call);
+            put(HttpClientType.NETTY_CLIENT_H3, http3ClientCall);
             put(HttpClientType.FLUPKE, flupkeCall);
         }};
     }
@@ -112,6 +119,11 @@ class Http3ClientTest {
         shouldGetFile(restClientHttp3Call, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
+    @Test
+    void callUsingNettyHttp3Client() throws InterruptedException {
+        shouldGetFile(http3ClientCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
+    }
+
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
         try (var scope = new RateLimittedScope<Integer>(parallel)) {
@@ -141,6 +153,12 @@ class Http3ClientTest {
 
     Function<String, Integer> restClientHttp3LocalCall = uri -> requestUsingRestClient(http3RestClientLocal, uri);
 
+    Function<String, Integer> http3ClientCall = uri -> Objects.requireNonNull(http3Client.baseUrl(uri)
+                    .get()
+                    .responseSingle((r, data) -> data.asString())
+                    .block())
+            .length();
+
     Function<String, Integer> flupkeCall = uri -> {
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
         try {
@@ -154,6 +172,8 @@ class Http3ClientTest {
     enum HttpClientType {
         REST_CLIENT_HTTP2,
         REST_CLIENT_HTTP3,
-        FLUPKE;
+        FLUPKE,
+        NETTY_CLIENT_H3
+        ;
     }
 }

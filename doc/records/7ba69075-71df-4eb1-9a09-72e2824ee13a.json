@@ -1,0 +1,380 @@
+[
+  {
+    "time": "2025-01-07T20:58:41.459725908Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 3376986965
+  },
+  {
+    "time": "2025-01-07T20:58:43.640340938Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 2146538192
+  },
+  {
+    "time": "2025-01-07T20:58:44.304959332Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 652513764
+  },
+  {
+    "time": "2025-01-07T20:58:46.911671111Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 2593659677
+  },
+  {
+    "time": "2025-01-07T20:58:50.255828949Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 3334882136
+  },
+  {
+    "time": "2025-01-07T20:58:52.937568195Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP2",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 2671006699
+  },
+  {
+    "time": "2025-01-07T20:58:54.768716941Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 1823187454
+  },
+  {
+    "time": "2025-01-07T20:58:56.510034825Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 1731864254
+  },
+  {
+    "time": "2025-01-07T20:58:57.119951589Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 601163012
+  },
+  {
+    "time": "2025-01-07T20:58:58.308046144Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 1179695030
+  },
+  {
+    "time": "2025-01-07T20:59:01.286740580Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 2969750656
+  },
+  {
+    "time": "2025-01-07T20:59:04.291644220Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "REST_CLIENT_HTTP3",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 2996920825
+  },
+  {
+    "time": "2025-01-07T20:59:07.030861153Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 2726179626
+  },
+  {
+    "time": "2025-01-07T20:59:09.561691673Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 2521854988
+  },
+  {
+    "time": "2025-01-07T20:59:10.509664355Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 939129221
+  },
+  {
+    "time": "2025-01-07T20:59:11.527656911Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 1008606893
+  },
+  {
+    "time": "2025-01-07T20:59:14.187827536Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 2644930656
+  },
+  {
+    "time": "2025-01-07T20:59:16.996857234Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "FLUPKE",
+    "uri": "https://www.gstatic.com/webp/gallery3/3_webp_ll.webp",
+    "responseSize": 145390,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 2800823972
+  },
+  {
+    "time": "2025-01-07T20:59:18.540859431Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "NETTY_CLIENT_H3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 10,
+    "parallel": 1,
+    "success": true,
+    "duration": 1537332158
+  },
+  {
+    "time": "2025-01-07T20:59:20.165287805Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "NETTY_CLIENT_H3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 10,
+    "success": true,
+    "duration": 1616033370
+  },
+  {
+    "time": "2025-01-07T20:59:21.776426507Z[UTC]",
+    "environment": {
+      "provider": "\"plus/lte/3g/microtic\"",
+      "ping": 18,
+      "downloadSpeed": 70,
+      "uploadSpeed": 19,
+      "adapterSocket": 100,
+      "bitrate": 780
+    },
+    "protocol": "NETTY_CLIENT_H3",
+    "uri": "https://example.com/",
+    "responseSize": 1256,
+    "repeat": 100,
+    "parallel": 100,
+    "success": true,
+    "duration": 1604803185
+  }
+]

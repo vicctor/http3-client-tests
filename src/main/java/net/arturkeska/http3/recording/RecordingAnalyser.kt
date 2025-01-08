@@ -9,7 +9,7 @@ object RecordingAnalyser {
 
         records
             .filter { it.success }
-            .filter { !it.environment.provider.contains("bussinesslink")}
+            .filter { it.environment.provider.contains("bussinesslink")}
             .groupBy { "[ responseSize=${it.responseSize/1024}KiB  parallel=${it.parallel} ]" }
             .forEach { sized ->
                 println(sized.key)

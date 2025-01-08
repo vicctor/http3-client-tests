@@ -46,10 +46,15 @@ public class Http3Application {
 		return builder.requestFactory(new ReactorNettyClientRequestFactory(client)).build();
 	}
 
-	private static HttpClient createHTTP3Client(HttpProtocol http3) {
+	@Bean
+	public HttpClient http3Client() {
+		return createHTTP3Client(HttpProtocol.HTTP3);
+	}
+
+	private static HttpClient createHTTP3Client(HttpProtocol httpProtocol) {
 		return HttpClient.create()
 				// Configure HTTP/3 protocol
-				.protocol(http3)
+				.protocol(httpProtocol)
 				// Configure HTTP/3 settings
 				.http3Settings(spec ->
 						spec.idleTimeout(Duration.ofSeconds(5))
