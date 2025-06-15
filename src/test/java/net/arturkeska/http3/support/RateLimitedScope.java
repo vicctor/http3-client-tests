@@ -4,11 +4,11 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.StructuredTaskScope;
 
-public class RateLimittedScope<T> extends StructuredTaskScope<T> {
+public class RateLimitedScope<T> extends StructuredTaskScope<T> {
 
     private final Semaphore pool;
 
-    public RateLimittedScope(int limit) {
+    public RateLimitedScope(int limit) {
         pool = new Semaphore(limit);
     }
 

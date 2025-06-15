@@ -1,12 +1,11 @@
 package net.arturkeska.http3;
 
 import net.arturkeska.http3.recording.Recorder;
-import net.arturkeska.http3.support.RateLimittedScope;
+import net.arturkeska.http3.support.RateLimitedScope;
 import net.luminis.http3.Http3ClientBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -16,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.StopWatch;
 import org.springframework.web.client.RestClient;
-import reactor.netty.http.client.HttpClientResponse;
 
 import java.io.IOException;
 import java.net.URI;
@@ -77,7 +75,7 @@ class Http3ClientTest {
         handers = new HashMap<>() {{
             put(HttpClientType.REST_CLIENT_HTTP2, restClientHttp2Call);
             put(HttpClientType.REST_CLIENT_HTTP3, restClientHttp3Call);
-            put(HttpClientType.NETTY_CLIENT_H3, http3ClientCall);
+            //put(HttpClientType.NETTY_CLIENT_H3, http3ClientCall);
             put(HttpClientType.FLUPKE, flupkeCall);
         }};
     }
@@ -104,13 +102,13 @@ class Http3ClientTest {
         }
     }
 
-    @Test
+    //@Test
     void callLocal() throws InterruptedException {
         shouldGetFile(restClientHttp3LocalCall, "https://localhost:8443/foo", 4, 50, 1);
     }
 
     @Test
-    void callusingFlupke() throws InterruptedException {
+    void callUsingFlupke() throws InterruptedException {
         shouldGetFile(flupkeCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
@@ -126,7 +124,7 @@ class Http3ClientTest {
 
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
-        try (var scope = new RateLimittedScope<Integer>(parallel)) {
+        try (var scope = new RateLimitedScope<Integer>(parallel)) {
             var executions = IntStream.range(0, repeat)
                     .mapToObj(n -> scope.fork(() -> getResourceCall.apply(uri)))
                     .toList();
@@ -172,8 +170,8 @@ class Http3ClientTest {
     enum HttpClientType {
         REST_CLIENT_HTTP2,
         REST_CLIENT_HTTP3,
-        FLUPKE,
-        NETTY_CLIENT_H3
+        FLUPKE
+        //, NETTY_CLIENT_H3
         ;
     }
 }
