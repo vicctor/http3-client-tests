@@ -1,0 +1,28 @@
+services:
+  http3-nginx:
+    build:
+      context: ./docker
+      dockerfile: Dockerfile
+    container_name: http3-test-server
+    ports:
+      - "80:80"         # HTTP (redirects to HTTPS with Alt-Svc)
+      - "443:443"       # HTTPS/HTTP2
+      - "443:443/udp"   # HTTP/3 QUIC (essential for Chrome HTTP/3)
+    volumes:
+      - nginx-logs:/var/log/nginx
+    environment:
+      - NGINX_HOST=http3-test.local
+      - NGINX_PORT=443
+      - HTTP3_ENABLED=true
+      - QUIC_ENABLED=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-k", "https://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  nginx-logs:
+    driver: local

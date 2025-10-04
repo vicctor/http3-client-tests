@@ -8,12 +8,12 @@ plugins {
 group = 'net.arturkeska'
 version = '0.0.1-SNAPSHOT'
 
-task runAnalyse(type: JavaExec) {
-	group = "Execution"
-	description = "Run the main class with JavaExecTask"
-	classpath = sourceSets.main.runtimeClasspath
-	main = "net.arturkeska.http3.recording.RecordingAnalyserKt"
-}
+//task runAnalyse(type: JavaExec) {
+//	group = "Execution"
+//	description = "Run the main class with JavaExecTask"
+//	classpath = sourceSets.main.runtimeClasspath
+//	main = "net.arturkeska.http3.recording.RecordingAnalyserKt"
+//}
 
 ext['reactor-bom.version'] = '2024.0.0'
 
@@ -31,6 +31,12 @@ java {
 	}
 }
 
+kotlin {
+//	compilerOptions {
+//		jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_24)
+//	}
+}
+
 repositories {
 	mavenCentral()
 }
@@ -39,7 +45,6 @@ dependencies {
 	implementation('org.springframework.boot:spring-boot-starter-web') {
 		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-tomcat'
 	}
-
 
 	implementation 'org.springframework.boot:spring-boot-starter-jetty'
 

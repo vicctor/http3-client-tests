@@ -1,0 +1,71 @@
+{
+    "status": "success",
+    "message": "HTTP/3 Early Hints API Response",
+    "server": "nginx-http3-docker",
+    "timestamp": "2025-01-20T12:00:00Z",
+    "protocol": "HTTP/3 (QUIC)",
+    "early_hints": {
+        "supported": true,
+        "implementation": "Link headers simulation",
+        "status_code": "103 (simulated)",
+        "preloaded_resources": [
+            "/static/style.css",
+            "/static/script.js",
+            "/api/critical-data"
+        ],
+        "benefits": [
+            "Faster resource loading",
+            "Improved user experience",
+            "Reduced perceived latency",
+            "Better Core Web Vitals"
+        ]
+    },
+    "http3_features": {
+        "quic_protocol": true,
+        "zero_rtt": true,
+        "connection_migration": true,
+        "no_head_of_line_blocking": true,
+        "multiplexing": true,
+        "built_in_tls": "TLS 1.3"
+    },
+    "performance_benefits": {
+        "connection_establishment": "0-RTT for repeat visits",
+        "multiplexing": "Independent stream processing",
+        "reliability": "Better handling of packet loss",
+        "mobile_optimization": "Connection migration support"
+    },
+    "endpoints": {
+        "health": "/health",
+        "status": "/status",
+        "api": "/api",
+        "critical_data": "/api/critical-data",
+        "static_resources": "/static/",
+        "root": "/"
+    },
+    "test_data": {
+        "load_time_simulation": "500ms server processing",
+        "early_hints_benefit": "Resources preloaded during processing",
+        "sample_array": [1, 2, 3, 4, 5],
+        "sample_object": {
+            "key1": "value1",
+            "key2": "value2",
+            "nested": {
+                "deep_key": "deep_value"
+            }
+        },
+        "random_uuid": "550e8400-e29b-41d4-a716-446655440000",
+        "large_string": "This demonstrates HTTP/3 performance with Early Hints. The combination provides optimal web performance through resource preloading and QUIC protocol benefits including 0-RTT connections, no head-of-line blocking, and connection migration support."
+    },
+    "testing": {
+        "curl_http2": "curl --http2 --insecure https://localhost/",
+        "curl_http3": "curl --http3-only --insecure https://localhost/",
+        "headers_check": "curl -I --http2 --insecure https://localhost/",
+        "browser_testing": "Modern browsers will automatically attempt HTTP/3 upgrade via Alt-Svc"
+    },
+    "specifications": {
+        "early_hints": "RFC 8297",
+        "http3": "RFC 9114", 
+        "alt_svc": "RFC 7838",
+        "quic": "RFC 9000"
+    }
+}
