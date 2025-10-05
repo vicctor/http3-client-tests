@@ -1,0 +1,3 @@
+1. Run test
+2. Debug net.arturkeska.http3.Http3ClientTest.callCloudflareNettyHttp3Client
+   2.1 show that we use isHttp3 /home/grxybek/.m2/repository/io/projectreactor/netty/reactor-netty-http/1.2.10/reactor-netty-http-1.2.10-sources.jar!/reactor/netty/http/client/HttpConnectionProvider.java:62

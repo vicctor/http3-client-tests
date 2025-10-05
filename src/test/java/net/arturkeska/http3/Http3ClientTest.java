@@ -2,7 +2,6 @@ package net.arturkeska.http3;
 
 import net.arturkeska.http3.recording.Recorder;
 import net.arturkeska.http3.support.RateLimitedScope;
-import net.luminis.http3.Http3ClientBuilder;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,10 +10,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.util.StopWatch;
-import org.springframework.web.client.RestClient;
 
 import java.io.IOException;
 import java.net.URI;
@@ -36,24 +35,24 @@ import java.util.stream.Stream;
 class Http3ClientTest {
     private static final int FILE_149KB_SIZE = 145390;
     private static final int PAGE_1KB_SIZE = 1256;
+    private static final int PAGE_2KB_SIZE = 125905;
     private final static String FILE_149KB ="https://www.gstatic.com/webp/gallery3/3_webp_ll.webp";
     private final static String PAGE_1KB = "https://example.com/";
+    private final static String CLOUDFLARE = "https://cloudflare-quic.com/";
 
     @Autowired
-    private RestClient http3RestClient;
-    @Autowired
-    private RestClient http2RestClient;
-    @Autowired
-    private RestClient http3RestClientLocal;
-    @Autowired
+    @Qualifier("http3Client")
     private reactor.netty.http.client.HttpClient http3Client;
+    @Autowired
+    @Qualifier("http2Client")
+    private reactor.netty.http.client.HttpClient http2Client;
     @Autowired
     private  Recorder recorder;
 
-    private HttpClient.Builder flupkeClientBuilder = new Http3ClientBuilder();
-    private HttpClient flupkeClient = flupkeClientBuilder.build();
+    private final HttpClient.Builder flupkeClientBuilder = new net.luminis.http3.Http3ClientBuilder();
+    private final HttpClient flupkeClient = flupkeClientBuilder.build();
 
-    private Map<HttpClientType, Function<String, Integer>> handers;
+    private Map<HttpClientType, Function<String, Integer>> handlers;
 
     private static Stream<Arguments> httpComparisonCases() {
         var cases = Arrays.stream(HttpClientType.values())
@@ -63,6 +62,9 @@ class Http3ClientTest {
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 10, 1),
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 10),
                         Arguments.of(type, PAGE_1KB, PAGE_1KB_SIZE, 100, 100),
+                        Arguments.of(type, CLOUDFLARE, PAGE_2KB_SIZE, 10, 1),
+                        Arguments.of(type, CLOUDFLARE, PAGE_2KB_SIZE, 100, 10),
+                        Arguments.of(type, CLOUDFLARE, PAGE_2KB_SIZE, 100, 100),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 10, 1),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 10),
                         Arguments.of(type, FILE_149KB, FILE_149KB_SIZE, 100, 100))
@@ -72,10 +74,9 @@ class Http3ClientTest {
 
     @BeforeEach
     public void init() {
-        handers = new HashMap<>() {{
-            put(HttpClientType.REST_CLIENT_HTTP2, restClientHttp2Call);
-            put(HttpClientType.REST_CLIENT_HTTP3, restClientHttp3Call);
-            //put(HttpClientType.NETTY_CLIENT_H3, http3ClientCall);
+        handlers = new HashMap<>() {{
+            put(HttpClientType.REST_CLIENT_HTTP2, http2NettyClientCall);
+            put(HttpClientType.REST_CLIENT_HTTP3, http3NettyClientCall);
             put(HttpClientType.FLUPKE, flupkeCall);
         }};
     }
@@ -90,7 +91,7 @@ class Http3ClientTest {
     void callTest(HttpClientType protocol, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
         var stopwatch = new StopWatch();
         stopwatch.start();
-        var handler = handers.get(protocol);
+        var handler = handlers.get(protocol);
         try {
             shouldGetFile(handler, uri, expectedResponseSize, repeat, parallel);
             stopwatch.stop();
@@ -102,26 +103,41 @@ class Http3ClientTest {
         }
     }
 
-    //@Test
-    void callLocal() throws InterruptedException {
-        shouldGetFile(restClientHttp3LocalCall, "https://localhost:8443/foo", 4, 50, 1);
-    }
-
     @Test
-    void callUsingFlupke() throws InterruptedException {
+    void call1KbPageUsingFlupke() throws InterruptedException {
         shouldGetFile(flupkeCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
     @Test
-    void callUsingRestClient() throws InterruptedException {
-        shouldGetFile(restClientHttp3Call, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
+    void callClaudflareUsingFlupke() throws InterruptedException {
+        shouldGetFile(flupkeCall, CLOUDFLARE, PAGE_2KB_SIZE, 1, 1);
+    }
+
+    @Test
+    void call1KbPageUsingHttp2NettyClient() throws InterruptedException {
+        shouldGetFile(http2NettyClientCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
     @Test
     void callUsingNettyHttp3Client() throws InterruptedException {
-        shouldGetFile(http3ClientCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
+        shouldGetFile(http3NettyClientCall, PAGE_1KB, PAGE_1KB_SIZE, 1, 1);
     }
 
+    @Test
+    void callCloudflareNettyHttp2Client() throws InterruptedException {
+        var response = http2Client.baseUrl(CLOUDFLARE).get().response().block();
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.status().code()).isEqualTo(200);
+        //shouldGetFile(http3NettyClientCall, CLOUDFLARE, PAGE_2KB_SIZE, 1, 1);
+    }
+
+    @Test
+    void callCloudflareNettyHttp3Client() throws InterruptedException {
+        var response = http3Client.baseUrl(CLOUDFLARE).get().response().block();
+        Assertions.assertThat(response).isNotNull();
+        Assertions.assertThat(response.status().code()).isEqualTo(200);
+        //shouldGetFile(http3NettyClientCall, CLOUDFLARE, PAGE_2KB_SIZE, 1, 1);
+    }
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {
         try (var scope = new RateLimitedScope<Integer>(parallel)) {
@@ -136,22 +152,13 @@ class Http3ClientTest {
         }
     }
 
-    Integer requestUsingRestClient(RestClient client, String uri) {
-        var body = client.get()
-                .uri(uri)
-                .retrieve()
-                .body(String.class);
+    Function<String, Integer> http2NettyClientCall = uri -> Objects.requireNonNull(http2Client.baseUrl(uri)
+                    .get()
+                    .responseSingle((r, data) -> data.asString())
+                    .block())
+            .length();
 
-        return body != null ? body.length() : 0;
-    }
-
-    Function<String, Integer> restClientHttp2Call = uri -> requestUsingRestClient(http2RestClient, uri);
-
-    Function<String, Integer> restClientHttp3Call = uri -> requestUsingRestClient(http3RestClient, uri);
-
-    Function<String, Integer> restClientHttp3LocalCall = uri -> requestUsingRestClient(http3RestClientLocal, uri);
-
-    Function<String, Integer> http3ClientCall = uri -> Objects.requireNonNull(http3Client.baseUrl(uri)
+    Function<String, Integer> http3NettyClientCall = uri -> Objects.requireNonNull(http3Client.baseUrl(uri)
                     .get()
                     .responseSingle((r, data) -> data.asString())
                     .block())
@@ -171,7 +178,5 @@ class Http3ClientTest {
         REST_CLIENT_HTTP2,
         REST_CLIENT_HTTP3,
         FLUPKE
-        //, NETTY_CLIENT_H3
-        ;
     }
 }

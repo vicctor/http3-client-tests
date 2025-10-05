@@ -1,37 +1,98 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
+# Docker
+# Eclipse
+# Gradle files (legacy)
+# HTTP/3 specific files
+# IDE specific files
 ### IntelliJ IDEA ###
+# IntelliJ specific
+# Java
+# Logs
+# Maven build directory
+# Maven local repository (if using local repo)
+# Maven wrapper files
+### NetBeans ###
+# Node.js (for any Node.js components)
+# OS specific
+# Runtime
+# Sandbox directory (development files)
+# SSL and certificates (keep private)
+### STS ###
+# Temporary files
+# VS Code
+### VS Code ###
+# Wireshark captures
+.apt_generated
+bin/
+build/
+certificate.pem
+*.class
+.classpath
+/dist/
+docker-compose.override.yml
+.DS_Store
+*.ear
+*.env
+.env
+.factorypath
+*.gradle
+.gradle
+.gradle/
+gradle/
+*.gradle.kts
+doc/variants/gradlew
+doc/variants/gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
+HELP.md
+hs_err_pid*
 .idea
-*.iws
+.idea/
 *.iml
 *.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### NetBeans ###
-/nbproject/private/
+*.iws
+*.jar
+*.key
+*.key_log
+*.keylog
+*.log
+logs/
+.mvn/
+mvnw
+mvnw.cmd
 /nbbuild/
-/dist/
 /nbdist/
 /.nb-gradle/
-
-### VS Code ###
+/nbproject/private/
+node_modules/
+npm-debug.log*
+out/
+*.p12
+*.pcapng
+*.pem
+private.key
+.project
+*.rar
+.repository/
+sandbox/
+.settings
+.settings/
+.springBeans
+!**/src/main/**/bin/
+!**/src/main/**/build/
+!**/src/main/**/out/
+!**/src/test/**/bin/
+!**/src/test/**/build/
+!**/src/test/**/out/
+ssl.key_log
+.sts4-cache
+target/
+*.tar.gz
+temp/
+Thumbs.db
+*.tmp
+tmp/
 .vscode/
+*.war
+wireshark-samples/*.key_log
+wireshark-samples/*.pcapng
+*.zip
