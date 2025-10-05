@@ -1,12 +1,10 @@
 package net.arturkeska.http3;
 
+import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.ssl.DefaultSslBundleRegistry;
-import org.springframework.boot.ssl.SslBundle;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.web.client.RestClient;
 import reactor.netty.http.Http3SslContextSpec;
 import reactor.netty.http.HttpProtocol;
@@ -61,37 +59,29 @@ public class Http3Application {
 	}
 
 	private static HttpClient createHTTP3Client() {
-
-
-		// Create HTTP/2 client with enhanced configuration
-		ConnectionProvider connectionProvider = ConnectionProvider.builder("http3-pool")
-				.maxConnections(50)
-				.maxIdleTime(Duration.ofSeconds(30))
-				.maxLifeTime(Duration.ofMinutes(5))
-				.pendingAcquireTimeout(Duration.ofSeconds(60))
-				.evictInBackground(Duration.ofSeconds(120))
+		// Create a more conservative HTTP/3 client configuration
+		ConnectionProvider connectionProvider = ConnectionProvider.builder("alt-http3-pool")
+				.maxConnections(10)
+				.maxIdleTime(Duration.ofSeconds(60))
+				.maxLifeTime(Duration.ofMinutes(10))
+				.pendingAcquireTimeout(Duration.ofSeconds(30))
+				.evictInBackground(Duration.ofSeconds(60))
 				.build();
 
-		return HttpClient.create(connectionProvider)
-				// Use HTTP/2 protocol
-				.protocol(HttpProtocol.HTTP3)
-				// Configure timeouts
-				.responseTimeout(Duration.ofSeconds(30))
-				// Enable HTTP/3 settings
-				.http3Settings(settings ->
-					settings.maxStreamsBidirectional(7)
-				)
-				.secure(sec -> createHTTP3Client().secure());
-	}
+		Http3SslContextSpec clientCtx =
+				Http3SslContextSpec.forClient()
+						.configure(builder -> builder.trustManager(InsecureTrustManagerFactory.INSTANCE));
 
-	/**
-	 * HTTP/3 client configuration - Note: reactor-netty doesn't fully support HTTP/3 yet
-	 * This is a placeholder for future HTTP/3 support or can be used with Jetty HTTP/3 client
-	 */
-	@Bean
-	public HttpClient futureHttp3Client() {
-		// For now, return HTTP/2 client with comment about HTTP/3
-		return createHTTP2Client()
-				.headers(headers -> headers.add("X-Requested-Protocol", "HTTP/3-Ready"));
+		return HttpClient.create(connectionProvider)
+				.wiretap(true)
+				// Use HTTP/3 protocol
+				.protocol(HttpProtocol.HTTP3)
+				.http3Settings(spec -> spec.idleTimeout(Duration.ofSeconds(5))
+						.maxData(10000000)
+						.maxStreamDataBidirectionalLocal(1000000))
+				// Simple SSL configuration
+				.secure(sslContextSpec -> sslContextSpec
+						.sslContext(clientCtx)
+				);
 	}
 }

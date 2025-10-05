@@ -75,8 +75,8 @@ class Http3ClientTest {
     @BeforeEach
     public void init() {
         handlers = new HashMap<>() {{
-            put(HttpClientType.REST_CLIENT_HTTP2, http2NettyClientCall);
-            put(HttpClientType.REST_CLIENT_HTTP3, http3NettyClientCall);
+            put(HttpClientType.HTTP_CLIENT_HTTP_2, http2NettyClientCall);
+            put(HttpClientType.HTTP_CLIENT_HTTP3, http3NettyClientCall);
             put(HttpClientType.FLUPKE, flupkeCall);
         }};
     }
@@ -175,8 +175,8 @@ class Http3ClientTest {
     };
 
     enum HttpClientType {
-        REST_CLIENT_HTTP2,
-        REST_CLIENT_HTTP3,
+        HTTP_CLIENT_HTTP_2,
+        HTTP_CLIENT_HTTP3,
         FLUPKE
     }
 }

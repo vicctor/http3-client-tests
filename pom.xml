@@ -22,11 +22,7 @@
         
         <!-- Spring Boot version -->
         <spring-boot.version>3.4.10</spring-boot.version>
-        
-        <!-- Jetty HTTP/3 versions -->
-        <jetty.version>12.0.3</jetty.version>
-        <jetty-http3.version>12.0.1</jetty-http3.version>
-        
+
         <!-- Other dependencies -->
         <reactor-bom.version>2024.0.0</reactor-bom.version>
         <netty-http3.version>0.0.30.Final</netty-http3.version>
@@ -76,35 +72,10 @@
             </exclusions>
         </dependency>
 
-        <!-- Spring Boot Starter Jetty -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jetty</artifactId>
-        </dependency>
-
-        <!-- Jetty HTTP/3 and HTTP/2 Support -->
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-alpn-java-server</artifactId>
-            <version>${jetty-http3.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-alpn-conscrypt-server</artifactId>
-            <version>${jetty-http3.version}</version>
-        </dependency>
-        
         <dependency>
             <groupId>org.eclipse.jetty.http3</groupId>
-            <artifactId>jetty-http3-server</artifactId>
-            <version>${jetty-http3.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.eclipse.jetty.http2</groupId>
-            <artifactId>jetty-http2-server</artifactId>
-            <version>${jetty-http3.version}</version>
+            <artifactId>jetty-http3-client</artifactId>
+            <version>12.1.1</version>
         </dependency>
 
         <!-- Reactor Netty HTTP -->
