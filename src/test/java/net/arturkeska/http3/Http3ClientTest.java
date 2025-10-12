@@ -136,7 +136,7 @@ class Http3ClientTest {
         var response = http3Client.baseUrl(CLOUDFLARE).get().response().block();
         Assertions.assertThat(response).isNotNull();
         Assertions.assertThat(response.status().code()).isEqualTo(200);
-        //shouldGetFile(http3NettyClientCall, CLOUDFLARE, PAGE_2KB_SIZE, 1, 1);
+        shouldGetFile(http3NettyClientCall, CLOUDFLARE, PAGE_2KB_SIZE, 1, 1);
     }
 
     private void shouldGetFile(Function<String, Integer> getResourceCall, String uri, long expectedResponseSize, int repeat, int parallel) throws InterruptedException {

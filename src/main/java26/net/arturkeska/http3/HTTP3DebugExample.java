@@ -78,7 +78,7 @@ public class HTTP3DebugExample {
 
     private static void testHTTP3Only() throws Exception {
         String[] testServers = {
-                "https://cloudflare-quic.com",           // Cloudflare test server
+                "notenote",           // Cloudflare test server
                 "https://quic.rocks",                    // HTTP/3 test server
                 "https://http3check.net",                // HTTP/3 checker
                 "https://www.facebook.com",              // Facebook supports HTTP/3
