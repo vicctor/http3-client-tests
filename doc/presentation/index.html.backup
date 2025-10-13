@@ -1,0 +1,1813 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HTTP/3 & QUIC: Security vs Latency Trade-offs</title>
+    
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/reset.css">
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/reveal.css">
+    <link rel="stylesheet" href="node_modules/reveal.js/dist/theme/black.css" id="theme">
+    <link rel="stylesheet" href="node_modules/reveal.js/plugin/highlight/monokai.css">
+    <link rel="stylesheet" href="node_modules/katex/dist/katex.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700;800&family=Muli:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Cosmic/Sci-Fi JDD Conference Theme - Based on Atmospheric Image */
+        :root {
+            /* Cosmic Color Palette - Extracted from Deep Space Aesthetic */
+            --cosmic-deep-blue: #0a0520;        /* Very dark blue/purple from image depths */
+            --cosmic-dark-purple: #1a0b2e;      /* Dark purple from nebula shadows */
+            --cosmic-nebula: #2d1b3d;           /* Mid-tone purple from cloud edges */
+            --cosmic-fuchsia: #e91e63;          /* Bright fuchsia from cosmic highlights */
+            --cosmic-magenta: #c2185b;          /* Vibrant magenta accent */
+            --cosmic-moon: #ffd54f;             /* Soft yellow/off-white from moon */
+            --cosmic-light-purple: #ba68c8;     /* Light purple for accents */
+            --cosmic-cyan: #26c6da;             /* Cyan blue for tech accents */
+            --cosmic-text: #e8eaf6;             /* Soft light purple-white for text */
+            --cosmic-text-muted: #b39ddb;       /* Muted purple-gray for secondary text */
+            --cosmic-overlay: rgba(10, 5, 32, 0.85); /* Dark overlay for slides */
+            
+            /* JDD Official Colors - Adapted for Cosmic Theme */
+            --jdd-primary: var(--cosmic-cyan);        /* Tech blue -> cosmic cyan */
+            --jdd-secondary: var(--cosmic-moon);      /* Orange -> moon yellow */
+            --jdd-accent: var(--cosmic-fuchsia);      /* Pink -> cosmic fuchsia */
+            --jdd-purple: var(--cosmic-light-purple); /* Purple -> light cosmic purple */
+            --jdd-pink: var(--cosmic-magenta);        /* Pink -> cosmic magenta */
+        }
+
+        /* ===== MAIN BACKGROUND ===== */
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 28px;
+            color: var(--cosmic-text);
+            /* Deep cosmic background - solid dark blue-purple from image depths */
+            background: var(--cosmic-deep-blue);
+            /* Subtle cosmic gradient for depth */
+            background: linear-gradient(135deg, var(--cosmic-deep-blue) 0%, var(--cosmic-dark-purple) 50%, var(--cosmic-nebula) 100%);
+        }
+
+        /* ===== SLIDE BACKGROUNDS ===== */
+        .reveal .slides section {
+            /* Semi-transparent dark overlay to allow main background to show through */
+            background: var(--cosmic-overlay);
+            border-radius: 8px;
+            backdrop-filter: blur(1px); /* Subtle blur for atmospheric effect */
+            
+            /* Compact layout settings */
+            height: 100vh;
+            padding: 60px 40px 80px 40px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+            max-height: calc(100vh - 80px);
+        }
+
+        .reveal .slides {
+            width: 100%;
+            height: 100%;
+            text-align: left;
+        }
+
+        .reveal .slides > section > section {
+            text-align: left;
+        }
+
+        .reveal .title-slide {
+            text-align: center;
+            justify-content: center;
+            /* Special cosmic glow for title slides */
+            background: rgba(26, 11, 46, 0.9);
+            box-shadow: 0 0 30px rgba(233, 30, 99, 0.2);
+        }
+
+        /* ===== TEXT COLORS ===== */
+        /* General text - soft light purple-white for readability */
+        .reveal p, 
+        .reveal li, 
+        .reveal td, 
+        .reveal span:not(.status-badge) {
+            color: var(--cosmic-text);
+            line-height: 1.4;
+        }
+
+        /* ===== HEADINGS ===== */
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            font-family: 'Muli', sans-serif;
+            font-weight: 600;
+            line-height: 1.1;
+            margin-bottom: 0.3em;
+            text-rendering: optimizeLegibility;
+            /* Cosmic text shadow for depth */
+            text-shadow: 0 0 10px rgba(233, 30, 99, 0.3);
+        }
+
+        .reveal h1 {
+            font-size: 2.2em;
+            color: var(--cosmic-fuchsia); /* Bright fuchsia from cosmic highlights */
+            font-weight: 700;
+            /* Enhanced glow for h1 */
+            text-shadow: 0 0 20px rgba(233, 30, 99, 0.5);
+        }
+
+        .reveal h2 {
+            font-size: 1.8em;
+            color: var(--cosmic-cyan); /* Tech cyan for h2 */
+            font-weight: 600;
+        }
+
+        .reveal h3 {
+            font-size: 1.3em;
+            color: var(--cosmic-light-purple); /* Light purple for h3 */
+            font-weight: 600;
+        }
+
+        .reveal h4 {
+            font-size: 1.1em;
+            color: var(--cosmic-moon); /* Moon yellow for h4 */
+            font-weight: 600;
+        }
+
+        /* ===== LINKS ===== */
+        .reveal a {
+            color: var(--cosmic-fuchsia); /* Bright fuchsia for links */
+            text-decoration: none;
+            border-bottom: 1px solid rgba(233, 30, 99, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .reveal a:hover {
+            color: var(--cosmic-magenta);
+            border-bottom-color: var(--cosmic-magenta);
+            text-shadow: 0 0 8px rgba(194, 24, 91, 0.6);
+        }
+
+        /* ===== PROGRESS BAR ===== */
+        .reveal .progress {
+            color: var(--cosmic-fuchsia);
+        }
+
+        .reveal .progress span {
+            background: linear-gradient(90deg, var(--cosmic-fuchsia) 0%, var(--cosmic-magenta) 100%);
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+        }
+
+        /* ===== NAVIGATION CONTROLS ===== */
+        .reveal .controls button.navigate-left,
+        .reveal .controls button.navigate-right,
+        .reveal .controls button.navigate-up,
+        .reveal .controls button.navigate-down {
+            color: var(--cosmic-text);
+            opacity: 0.6;
+            transition: all 0.3s ease;
+        }
+
+        .reveal .controls button:hover {
+            opacity: 1;
+            color: var(--cosmic-fuchsia);
+            text-shadow: 0 0 8px rgba(233, 30, 99, 0.6);
+        }
+
+        /* ===== CODE BLOCKS ===== */
+        .reveal pre {
+            background: var(--cosmic-dark-purple);
+            border: 1px solid var(--cosmic-nebula);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .reveal pre code {
+            background: var(--cosmic-dark-purple); /* Dark purple background */
+            color: #e8eaf6; /* Soft white for readability */
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            padding: 1rem;
+        }
+
+        .reveal code {
+            background: rgba(26, 11, 46, 0.6);
+            color: var(--cosmic-moon);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.85em;
+        }
+
+        /* ===== JDD COSMIC THEME COMPONENTS ===== */
+
+        /* JDD Header - Cosmic styling */
+        .jdd-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: linear-gradient(135deg, var(--cosmic-nebula) 0%, var(--cosmic-dark-purple) 50%, var(--cosmic-deep-blue) 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(233, 30, 99, 0.3);
+            border-bottom: 1px solid rgba(233, 30, 99, 0.2);
+        }
+
+        .jdd-header h1 {
+            color: var(--cosmic-text);
+            font-size: 1.1em;
+            margin: 0;
+            font-weight: 600;
+            font-family: 'Muli', sans-serif;
+            text-shadow: 0 0 10px rgba(233, 30, 99, 0.4);
+        }
+
+        .jdd-header .conference-info {
+            margin-left: auto;
+            color: var(--cosmic-text-muted);
+            font-size: 0.7em;
+            font-weight: 400;
+        }
+
+        /* JDD Footer - Cosmic styling */
+        .jdd-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px;
+            background: var(--cosmic-deep-blue);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+            font-size: 0.6em;
+            color: var(--cosmic-text-muted);
+            border-top: 1px solid rgba(233, 30, 99, 0.2);
+        }
+
+        .jdd-footer .slide-number {
+            color: var(--cosmic-fuchsia);
+            font-weight: 600;
+        }
+
+        /* ===== COSMIC THEMED COMPONENTS ===== */
+
+        /* JDD Color System - Cosmic adapted */
+        .color1 { color: var(--cosmic-cyan); font-weight: 600; }
+        .color2 { color: var(--cosmic-moon); font-weight: 600; }
+        .color3 { color: var(--cosmic-fuchsia); font-weight: 600; }
+        .color4 { color: var(--cosmic-light-purple); font-weight: 600; }
+        .color5 { color: var(--cosmic-magenta); font-weight: 600; }
+        .color6 { color: var(--cosmic-text); font-weight: 600; }
+
+        /* Cosmic feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .feature-card {
+            background: rgba(26, 11, 46, 0.7);
+            border: 1px solid rgba(233, 30, 99, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--cosmic-fuchsia);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.3);
+            border-color: var(--cosmic-fuchsia);
+        }
+
+        .feature-card h4 {
+            color: var(--cosmic-fuchsia);
+            margin-bottom: 0.5rem;
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+
+        .feature-card p, .feature-card ul {
+            font-size: 0.8em;
+            line-height: 1.3;
+            margin: 0.5rem 0;
+        }
+
+        /* Cosmic break cards */
+        .break-card {
+            background: linear-gradient(135deg, var(--cosmic-nebula), var(--cosmic-dark-purple)) !important;
+            border: 1px solid var(--cosmic-fuchsia) !important;
+            border-radius: 8px !important;
+            padding: 1rem;
+            color: var(--cosmic-text) !important;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.4);
+        }
+
+        .break-card h4 {
+            color: var(--cosmic-moon) !important;
+            font-size: 1em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 10px rgba(255, 213, 79, 0.5);
+        }
+
+        /* Cosmic tables */
+        .performance-table {
+            font-size: 0.7em;
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: rgba(26, 11, 46, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid rgba(233, 30, 99, 0.2);
+        }
+
+        .performance-table th {
+            background: linear-gradient(135deg, var(--cosmic-nebula), var(--cosmic-fuchsia));
+            color: var(--cosmic-text);
+            padding: 8px 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+        }
+
+        .performance-table td {
+            padding: 6px 12px;
+            border-bottom: 1px solid rgba(233, 30, 99, 0.1);
+            color: var(--cosmic-text);
+        }
+
+        .performance-table tr:nth-child(even) {
+            background: rgba(10, 5, 32, 0.5);
+        }
+
+        .performance-table tr:hover {
+            background: rgba(233, 30, 99, 0.1);
+        }
+
+        /* Cosmic status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.65em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .status-success {
+            background: rgba(38, 198, 218, 0.2);
+            color: var(--cosmic-cyan);
+            border: 1px solid var(--cosmic-cyan);
+            box-shadow: 0 0 8px rgba(38, 198, 218, 0.3);
+        }
+
+        .status-warning {
+            background: rgba(255, 213, 79, 0.2);
+            color: var(--cosmic-moon);
+            border: 1px solid var(--cosmic-moon);
+            box-shadow: 0 0 8px rgba(255, 213, 79, 0.3);
+        }
+
+        .status-danger {
+            background: rgba(233, 30, 99, 0.2);
+            color: var(--cosmic-fuchsia);
+            border: 1px solid var(--cosmic-fuchsia);
+            box-shadow: 0 0 8px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Cosmic metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.8rem;
+            margin: 1rem 0;
+        }
+
+        .metric-card {
+            background: rgba(26, 11, 46, 0.7);
+            border: 1px solid rgba(186, 104, 200, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(186, 104, 200, 0.4);
+        }
+
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--cosmic-fuchsia);
+            margin-bottom: 0.3rem;
+            font-family: 'Muli', sans-serif;
+            text-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+        }
+
+        .metric-label {
+            font-size: 0.7em;
+            color: var(--cosmic-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        /* Cosmic progress bars */
+        .progress-comparison {
+            margin: 0.8rem 0;
+        }
+
+        .progress-bar {
+            background: var(--cosmic-deep-blue);
+            border-radius: 6px;
+            overflow: hidden;
+            margin: 0.3rem 0;
+            height: 24px;
+            position: relative;
+            border: 1px solid rgba(233, 30, 99, 0.2);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cosmic-fuchsia), var(--cosmic-cyan));
+            display: flex;
+            align-items: center;
+            padding: 0 0.8rem;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75em;
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+        }
+
+        /* Cosmic equations */
+        .equation {
+            font-size: 1.1em;
+            margin: 1rem 0;
+            text-align: center;
+            background: rgba(26, 11, 46, 0.8);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 2px solid var(--cosmic-fuchsia);
+            box-shadow: 0 0 20px rgba(233, 30, 99, 0.3);
+        }
+
+        /* Cosmic blockquotes */
+        .reveal blockquote {
+            background: rgba(26, 11, 46, 0.6);
+            border-left: 3px solid var(--cosmic-cyan);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: var(--cosmic-text);
+            border-radius: 4px;
+            font-size: 0.9em;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Java highlight - cosmic */
+        .java-highlight {
+            background: linear-gradient(135deg, rgba(38, 198, 218, 0.1) 0%, rgba(255, 213, 79, 0.1) 100%);
+            border-radius: 6px;
+            padding: 0.8rem;
+            margin: 0.8rem 0;
+            border: 1px solid rgba(38, 198, 218, 0.2);
+        }
+
+        /* Speaker and track names - cosmic */
+        .speaker-name {
+            display: inline-block;
+            font-weight: 700;
+            font-size: 0.85em;
+            color: var(--cosmic-magenta) !important;
+            text-shadow: 0 0 8px rgba(194, 24, 91, 0.4);
+        }
+
+        .track-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: var(--cosmic-text-muted);
+        }
+
+        /* Cosmic grid layouts */
+        .security-vs-latency {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            align-items: start;
+            margin: 1rem 0;
+        }
+
+        /* Enhanced cosmic effects */
+        .reveal .slides section .fragment.highlight-current-blue {
+            opacity: 1;
+            visibility: inherit;
+        }
+        
+        .reveal .slides section .fragment.highlight-current-blue.current-fragment {
+            color: var(--cosmic-fuchsia);
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(233, 30, 99, 0.6);
+        }
+
+        /* Cosmic backgrounds override */
+        .reveal .backgrounds {
+            background: var(--cosmic-deep-blue);
+        }
+
+        /* Mobile responsiveness for cosmic theme */
+        @media (max-width: 768px) {
+            .reveal {
+                font-size: 24px;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+                gap: 0.8rem;
+            }
+            
+            .security-vs-latency {
+                grid-template-columns: 1fr;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        :root {
+            /* JDD Official Colors - Dark Mode Adapted */
+            --jdd-primary: #03a9f4;        /* Main blue */
+            --jdd-secondary: #FF9800;      /* Orange */
+            --jdd-accent: #fbc02d;         /* Yellow */
+            --jdd-purple: #8c239f;         /* Purple */
+            --jdd-pink: #ff3369;           /* Pink/Red */
+            --jdd-dark: #1a1a1a;           /* Dark background */
+            --jdd-darker: #0d0d0d;         /* Darker background */
+            --jdd-text: #e0e0e0;           /* Light text */
+            --jdd-text-muted: #b0b0b0;     /* Muted text */
+            --jdd-break-bg: #1A0B39;       /* Dark purple for breaks */
+            --jdd-break-border: #B40766;   /* Pink border */
+            --jdd-speaker: #B40766;        /* Speaker name color */
+            --jdd-track: #888888;          /* Track name color */
+            --jdd-border: #333333;         /* Dark border */
+            --jdd-card-bg: #2a2a2a;        /* Card background */
+        }
+
+        .reveal {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 28px; /* Reduced from default 40px */
+            color: var(--jdd-text);
+            background: var(--jdd-dark);
+        }
+
+        .reveal .slides {
+            width: 100%;
+            height: 100%;
+        }
+
+        .reveal .slides section {
+            height: 100vh;
+            padding: 60px 40px 80px 40px; /* Reduced padding */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        .reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+            font-family: 'Muli', sans-serif;
+            font-weight: 600;
+            color: var(--jdd-text);
+            line-height: 1.1; /* Tighter line height */
+            margin-bottom: 0.3em; /* Reduced margin */
+            text-rendering: optimizeLegibility;
+        }
+
+        .reveal h1 {
+            font-size: 2.2em; /* Reduced from 3rem */
+            color: var(--jdd-primary);
+            text-shadow: none;
+            font-weight: 700;
+        }
+
+        .reveal h2 {
+            font-size: 1.8em; /* Reduced from 2.5rem */
+            color: var(--jdd-primary);
+            font-weight: 600;
+        }
+
+        .reveal h3 {
+            font-size: 1.3em; /* Reduced from 1.5rem */
+            color: var(--jdd-text);
+            font-weight: 600;
+        }
+
+        .reveal h4 {
+            font-size: 1.1em; /* Reduced */
+            font-weight: 600;
+        }
+
+        .reveal .slides {
+            text-align: left;
+        }
+
+        .reveal .slides > section > section {
+            text-align: left;
+        }
+
+        .reveal .title-slide {
+            text-align: center;
+            justify-content: center;
+        }
+
+        /* JDD Header styling - Dark Mode */
+        .jdd-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px; /* Reduced height */
+            background: linear-gradient(135deg, var(--jdd-primary) 0%, var(--jdd-secondary) 100%);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem; /* Reduced padding */
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .jdd-header h1 {
+            color: white;
+            font-size: 1.1em; /* Reduced font size */
+            margin: 0;
+            font-weight: 600;
+            font-family: 'Muli', sans-serif;
+        }
+
+        .jdd-header .conference-info {
+            margin-left: auto;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.7em; /* Reduced font size */
+            font-weight: 400;
+        }
+
+        /* JDD Color System */
+        .color1 { color: var(--jdd-primary); font-weight: 600; }      /* Blue */
+        .color2 { color: var(--jdd-secondary); font-weight: 600; }    /* Orange */
+        .color3 { color: var(--jdd-accent); font-weight: 600; }       /* Yellow */
+        .color4 { color: var(--jdd-purple); font-weight: 600; }       /* Purple */
+        .color5 { color: var(--jdd-pink); font-weight: 600; }         /* Pink */
+        .color6 { color: var(--jdd-text); font-weight: 600; }         /* Light */
+
+        /* Legacy color classes for compatibility */
+        .highlight-primary { color: var(--jdd-primary); font-weight: 600; }
+        .highlight-secondary { color: var(--jdd-secondary); font-weight: 600; }
+        .highlight-java { color: var(--jdd-secondary); font-weight: 600; }
+        .highlight-green { color: var(--jdd-primary); font-weight: 600; }
+        .highlight-red { color: var(--jdd-pink); font-weight: 600; }
+        .highlight-yellow { color: var(--jdd-accent); font-weight: 600; }
+
+        /* Compact feature cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Smaller min width */
+            gap: 1rem; /* Reduced gap */
+            margin: 1rem 0; /* Reduced margin */
+        }
+
+        .feature-card {
+            background: var(--jdd-card-bg);
+            border: 1px solid var(--jdd-border);
+            padding: 1rem; /* Reduced padding */
+            border-radius: 8px; /* Smaller radius for compactness */
+            border-left: 3px solid var(--jdd-primary); /* Thinner border */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-1px); /* Smaller hover effect */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .feature-card h4 {
+            color: var(--jdd-primary);
+            margin-bottom: 0.5rem; /* Reduced margin */
+            font-size: 0.9em; /* Smaller font */
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+        }
+
+        .feature-card p, .feature-card ul {
+            font-size: 0.8em; /* Smaller text */
+            line-height: 1.3;
+            margin: 0.5rem 0;
+        }
+
+        /* Compact break cards */
+        .break-card {
+            background-color: var(--jdd-break-bg) !important;
+            border: 1px solid var(--jdd-break-border) !important;
+            border-radius: 8px !important;
+            padding: 1rem; /* Reduced padding */
+            color: white !important;
+            text-align: center;
+        }
+
+        .break-card h4 {
+            color: white !important;
+            font-size: 1em;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Compact grid layouts */
+        .security-vs-latency {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem; /* Reduced gap */
+            align-items: start;
+            margin: 1rem 0; /* Reduced margin */
+        }
+
+        /* Compact tables */
+        .performance-table {
+            font-size: 0.7em; /* Smaller font */
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0; /* Reduced margin */
+            background: var(--jdd-card-bg);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .performance-table th {
+            background: var(--jdd-primary);
+            color: white;
+            padding: 8px 12px; /* Reduced padding */
+            text-align: left;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 0.85em;
+        }
+
+        .performance-table td {
+            padding: 6px 12px; /* Reduced padding */
+            border-bottom: 1px solid var(--jdd-border);
+            color: var(--jdd-text);
+        }
+
+        .performance-table tr:nth-child(even) {
+            background: var(--jdd-darker);
+        }
+
+        .performance-table tr:hover {
+            background: rgba(3, 169, 244, 0.1);
+        }
+
+        /* Compact status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px; /* Reduced padding */
+            border-radius: 12px; /* Smaller radius */
+            font-size: 0.65em; /* Smaller font */
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .status-success {
+            background: rgba(3, 169, 244, 0.2);
+            color: var(--jdd-primary);
+            border: 1px solid var(--jdd-primary);
+        }
+
+        .status-warning {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--jdd-secondary);
+            border: 1px solid var(--jdd-secondary);
+        }
+
+        .status-danger {
+            background: rgba(255, 51, 105, 0.2);
+            color: var(--jdd-pink);
+            border: 1px solid var(--jdd-pink);
+        }
+
+        /* Compact metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* Smaller cards */
+            gap: 0.8rem; /* Reduced gap */
+            margin: 1rem 0; /* Reduced margin */
+        }
+
+        .metric-card {
+            background: var(--jdd-card-bg);
+            border: 1px solid var(--jdd-border);
+            border-radius: 8px;
+            padding: 1rem; /* Reduced padding */
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .metric-value {
+            font-size: 1.5em; /* Reduced font size */
+            font-weight: 700;
+            color: var(--jdd-primary);
+            margin-bottom: 0.3rem; /* Reduced margin */
+            font-family: 'Muli', sans-serif;
+        }
+
+        .metric-label {
+            font-size: 0.7em; /* Smaller font */
+            color: var(--jdd-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            font-weight: 600;
+        }
+
+        /* Compact progress bars */
+        .progress-comparison {
+            margin: 0.8rem 0; /* Reduced margin */
+        }
+
+        .progress-bar {
+            background: var(--jdd-darker);
+            border-radius: 6px; /* Smaller radius */
+            overflow: hidden;
+            margin: 0.3rem 0; /* Reduced margin */
+            height: 24px; /* Smaller height */
+            position: relative;
+            border: 1px solid var(--jdd-border);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--jdd-primary), var(--jdd-secondary));
+            display: flex;
+            align-items: center;
+            padding: 0 0.8rem; /* Reduced padding */
+            color: white;
+            font-weight: 600;
+            font-size: 0.75em; /* Smaller font */
+        }
+
+        /* Compact equations */
+        .equation {
+            font-size: 1.1em; /* Reduced font size */
+            margin: 1rem 0; /* Reduced margin */
+            text-align: center;
+            background: var(--jdd-card-bg);
+            padding: 1.2rem; /* Reduced padding */
+            border-radius: 8px;
+            border: 2px solid var(--jdd-primary);
+        }
+
+        /* JDD Footer - Compact */
+        .jdd-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 30px; /* Reduced height */
+            background: var(--jdd-darker);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem; /* Reduced padding */
+            font-size: 0.6em; /* Smaller font */
+            color: var(--jdd-text-muted);
+            border-top: 1px solid var(--jdd-border);
+        }
+
+        .jdd-footer .slide-number {
+            color: var(--jdd-primary);
+            font-weight: 600;
+        }
+
+        /* Compact typography */
+        .reveal code {
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            background: var(--jdd-darker);
+            padding: 1px 4px; /* Reduced padding */
+            border-radius: 3px;
+            color: var(--jdd-accent);
+            font-size: 0.85em;
+        }
+
+        .reveal blockquote {
+            background: var(--jdd-card-bg);
+            border-left: 3px solid var(--jdd-primary); /* Thinner border */
+            padding: 1rem; /* Reduced padding */
+            margin: 1rem 0; /* Reduced margin */
+            font-style: italic;
+            color: var(--jdd-text);
+            border-radius: 4px;
+            font-size: 0.9em; /* Smaller font */
+        }
+
+        /* Responsive typography */
+        .small-text { 
+            font-size: 0.75em; /* Smaller */
+            line-height: 1.3;
+        }
+        
+        .large-text { 
+            font-size: 1.1em; /* Reduced */
+            font-weight: 600;
+        }
+
+        /* Compact links */
+        .reveal a {
+            color: var(--jdd-primary);
+            text-decoration: none;
+        }
+
+        .reveal a:hover {
+            color: var(--jdd-secondary);
+        }
+
+        /* Compact lists */
+        .reveal ul, .reveal ol {
+            margin: 0.8rem 0; /* Reduced margin */
+            padding-left: 1.2rem; /* Reduced padding */
+        }
+
+        .reveal li {
+            margin: 0.3rem 0; /* Reduced margin */
+            line-height: 1.3;
+            font-size: 0.9em; /* Smaller font */
+        }
+
+        /* Java highlight - compact */
+        .java-highlight {
+            background: linear-gradient(135deg, rgba(3, 169, 244, 0.1) 0%, rgba(255, 152, 0, 0.1) 100%);
+            border-radius: 6px;
+            padding: 0.8rem; /* Reduced padding */
+            margin: 0.8rem 0; /* Reduced margin */
+        }
+
+        /* Speaker and track names - compact */
+        .speaker-name {
+            display: inline-block;
+            font-weight: 700;
+            font-size: 0.85em; /* Smaller font */
+            color: var(--jdd-speaker) !important;
+        }
+
+        .track-name {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.8em; /* Smaller font */
+            text-transform: uppercase;
+            color: var(--jdd-track);
+        }
+
+        /* Ensure content fits screen */
+        .reveal .slides section {
+            max-height: calc(100vh - 80px); /* Account for header/footer */
+            overflow-y: auto;
+        }
+
+        /* Dark mode backgrounds */
+        .reveal .backgrounds {
+            background: var(--jdd-dark);
+        }
+
+        .reveal .slides section {
+            background: var(--jdd-dark);
+        }
+
+        /* Compact fragment animations */
+        .reveal .slides section .fragment.highlight-current-blue {
+            opacity: 1;
+            visibility: inherit;
+        }
+        
+        .reveal .slides section .fragment.highlight-current-blue.current-fragment {
+            color: var(--jdd-primary);
+            font-weight: 600;
+        }
+
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .reveal {
+                font-size: 24px; /* Even smaller on mobile */
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr; /* Single column on mobile */
+                gap: 0.8rem;
+            }
+            
+            .security-vs-latency {
+                grid-template-columns: 1fr; /* Single column on mobile */
+            }
+            
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr); /* Two columns on mobile */
+            }
+        }
+
+        /* Set the image URL */
+        background-image: url('https://jdd.org.pl/wp-content/uploads/2024/12/jdd_bg_2025.jpg');
+
+        /* Ensure the image covers the entire area without distortion */
+        background-size: cover;
+
+        /* Center the image */
+        background-position: center;
+
+        /* Prevent the image from tiling/repeating */
+        background-repeat: no-repeat;
+
+        /* Optional: Set a solid color fallback */
+        background-color: #000000;
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <!-- JDD Conference Header -->
+        <div class="jdd-header">
+            <h1>JDD Conference 2025</h1>
+            <div class="conference-info">Community-driven Conference For All Developers • HTTP/3 Track</div>
+        </div>
+
+        <!-- JDD Footer -->
+        <div class="jdd-footer">
+            <div>HTTP/3 & QUIC: Security vs Latency</div>
+            <div class="slide-number"></div>
+        </div>
+
+        <div class="slides">
+            
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>HTTP/3 & QUIC</h1>
+                <h2 class="color2">Security vs Latency Trade-offs</h2>
+                <div style="margin: 2rem 0;">
+                    <p class="large-text">Optimizing Web Performance in the Modern Internet</p>
+                </div>
+                <div class="feature-grid" style="margin-top: 3rem;">
+                    <div class="feature-card">
+                        <h4 class="color1">🚀 Performance</h4>
+                        <p>15-55% faster in real-world scenarios</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color2">☕ Java Ready</h4>
+                        <p>JDK 26, Netty, Jetty, Spring Boot 3.4</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color4">🔐 Security</h4>
+                        <p>TLS 1.3, 0-RTT, improved encryption</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Euler-Lagrange Equation -->
+            <section>
+                <h2>The Rule of Optimization</h2>
+                <div class="equation">
+                    <p>Euler-Lagrange Equation:</p>
+                    <div id="euler-equation"></div>
+                </div>
+                <p class="fragment">The fundamental principle behind all optimization problems</p>
+            </section>
+
+            <!-- Security vs Latency -->
+            <section>
+                <h2 class="color1">💰 The Business Reality</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value color1">$80B</div>
+                        <div class="metric-label">Cybersecurity 2016</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value color2">$200B+</div>
+                        <div class="metric-label">Cybersecurity 2024</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value color3">12-15%</div>
+                        <div class="metric-label">Annual Growth</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value color4">$215B</div>
+                        <div class="metric-label">Gartner 2025 Forecast</div>
+                    </div>
+                </div>
+                <div class="java-highlight">
+                    <h4 class="color5">⚡ Key Insight</h4>
+                    <p>Every millisecond matters: <strong><a href="https://gist.github.com/jboner/2841832">Latency Numbers Every Programmer Should Know</a></strong> (Jeff Dean)</p>
+                </div>
+            </section>
+
+            <!-- Business Demands -->
+            <section>
+                <h2 class="color1">What Developers Need</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4 class="color1">🚀 Performance First</h4>
+                        <ul class="small-text">
+                            <li>Sub-second response times</li>
+                            <li>High throughput under load</li>
+                            <li>Efficient resource utilization</li>
+                            <li>Mobile-friendly networking</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color4">🔐 Security by Design</h4>
+                        <ul class="small-text">
+                            <li>End-to-end encryption</li>
+                            <li>Zero-trust architecture</li>
+                            <li>Compliance requirements</li>
+                            <li>Protection against attacks</li>
+                        </ul>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <div class="large-text color1">
+                        The eternal Java developer challenge: <strong>Latency ↔ Security</strong>
+                    </div>
+                    <p class="fragment small-text color2">Can HTTP/3 solve both? Let's find out! ☕</p>
+                </div>
+            </section>
+
+            <!-- HTTP Evolution -->
+            <section>
+                <section>
+                    <h2>How to Optimize HTTP?</h2>
+                    <h3>The Evolution Journey</h3>
+                </section>
+                
+                <section>
+                    <h3>History of HTTP</h3>
+                    <ul>
+                        <li>HTTP/1.0 (1996) - Simple, inefficient</li>
+                        <li>HTTP/1.1 (1997) - Keep-alive, pipelining</li>
+                        <li>HTTP/2 (2015) - Multiplexing over TCP</li>
+                        <li>HTTP/3 (2022) - QUIC protocol, UDP-based</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>History of TLS</h3>
+                    <ul>
+                        <li>SSL 1.0/2.0/3.0 - Early encryption</li>
+                        <li>TLS 1.0/1.1 - Improved security</li>
+                        <li>TLS 1.2 - Modern encryption</li>
+                        <li>TLS 1.3 - Reduced handshake, 0-RTT</li>
+                    </ul>
+                </section>
+            </section>
+
+            <!-- QUIC Story -->
+            <section>
+                <section>
+                    <h2>Quick Story about QUIC</h2>
+                </section>
+                
+                <section>
+                    <h3>QUIC Development</h3>
+                    <blockquote class="small-text">
+                        "The IETF formed a QUIC working group in 2016. Their charter was to take Google's web-specific implementation and adapt it to be a general-purpose transport protocol. The internals of Google QUIC looked very much like HTTP/2, but mixed in innovative ideas in transport and encryption."
+                    </blockquote>
+                    <p>Key innovation: <strong>Separating functionality into components</strong></p>
+                </section>
+            </section>
+
+            <!-- Who Uses QUIC -->
+            <section>
+                <section>
+                    <h2>Who Uses QUIC?</h2>
+                </section>
+                
+                <section>
+                    <h3>🖥️ Servers</h3>
+                    <ul>
+                        <li><span class="highlight-green">nginx</span> - since 1.25.0 (May 2023)</li>
+                        <li><span class="highlight-green">Netty</span> - since 4.2.1.Final (May 2025)</li>
+                        <li><span class="highlight-green">Jetty</span> - since jetty-10.0.8</li>
+                        <li><span class="highlight-green">Spring Boot 3.4</span> - (November 21, 2024)</li>
+                        <li><span class="highlight-green">AWS/GCP</span> - Production support</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>☕ Java Ecosystem</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Framework</th>
+                                <th>Version</th>
+                                <th>HTTP/3 Status</th>
+                                <th>Production Ready</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Spring Boot</strong></td>
+                                <td>3.4+</td>
+                                <td><span class="status-badge status-success">✅ Netty-based</span></td>
+                                <td>Nov 2024</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Netty</strong></td>
+                                <td>4.2.1.Final</td>
+                                <td><span class="status-badge status-success">✅ Full Support</span></td>
+                                <td>May 2025</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Jetty</strong></td>
+                                <td>10.0.8+</td>
+                                <td><span class="status-badge status-warning">🟡 Experimental</span></td>
+                                <td>Nov 2021</td>
+                            </tr>
+                            <tr>
+                                <td><strong>JDK HttpClient</strong></td>
+                                <td>26 (JEP 517)</td>
+                                <td><span class="status-badge status-warning">🟡 In Progress</span></td>
+                                <td>Expected 2025</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h3 class="color1">☕ Java Status (JDK 26 - Sep 2025)</h3>
+                    <div class="security-vs-latency">
+                        <div class="feature-card">
+                            <h4><span class="status-badge status-success">✅ Production Ready</span></h4>
+                            <ul class="small-text">
+                                <li><span class="color2">Basic QUIC implementation</span></li>
+                                <li>HttpClient API integration</li>
+                                <li>TLS 1.3 support</li>
+                                <li>Basic HTTP/3 functionality</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4><span class="status-badge status-warning">❌ Current Limitations</span></h4>
+                            <ul class="small-text">
+                                <li>No server-side implementation</li>
+                                <li>Only SunJSSE provider</li>
+                                <li>Experimental status</li>
+                                <li>Performance tuning in progress</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <blockquote>
+                        <strong class="color4">JEP 517:</strong> <code>HttpClient</code> with HTTP/3 support expected in JDK 26
+                    </blockquote>
+                </section>
+            </section>
+
+            <!-- Features -->
+            <section>
+                <section>
+                    <h2>Does It Work?</h2>
+                    <h3>Key Features Analysis</h3>
+                </section>
+
+                <!-- Connection Reuse -->
+                <section>
+                    <h3>🔄 Connection Reuse</h3>
+                    <p>Connection reuse matters when:</p>
+                    <ul>
+                        <li>Multiple requests to the same server</li>
+                        <li>Reducing handshake overhead</li>
+                        <li>Maintaining connection state</li>
+                    </ul>
+                    <p class="fragment">HTTP/3 + 0-RTT = <strong>Instant reconnection</strong></p>
+                </section>
+
+                <!-- Multiplexing -->
+                <section>
+                    <h3>🚦 Multiplexing</h3>
+                    <div class="security-vs-latency">
+                        <div>
+                            <h4>HTTP/2 (TCP)</h4>
+                            <ul class="small-text">
+                                <li>Head-of-line blocking</li>
+                                <li>Single TCP stream</li>
+                                <li>Packet loss affects all streams</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>HTTP/3 (QUIC/UDP)</h4>
+                            <ul class="small-text">
+                                <li>Independent streams</li>
+                                <li>Per-stream flow control</li>
+                                <li>Packet loss affects only one stream</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Implementation Status -->
+                <section>
+                    <h3>📊 Implementation Status</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Library/Client</th>
+                                <th>Language</th>
+                                <th>Multiplexing</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ngtcp2 + nghttp3</td>
+                                <td>C</td>
+                                <td class="highlight-green">✅ Full</td>
+                                <td>Production</td>
+                            </tr>
+                            <tr>
+                                <td>quiche (Cloudflare)</td>
+                                <td>Rust</td>
+                                <td class="highlight-green">✅ Full</td>
+                                <td>Production</td>
+                            </tr>
+                            <tr>
+                                <td>curl</td>
+                                <td>C</td>
+                                <td class="highlight-green">✅ Full</td>
+                                <td>Production</td>
+                            </tr>
+                            <tr>
+                                <td>Netty/Jetty (HTTP/3)</td>
+                                <td>Java</td>
+                                <td class="highlight-yellow">🟡 Partial</td>
+                                <td>Experimental</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- 0-RTT -->
+            <section>
+                <section>
+                    <h2>🚀 0-RTT (Zero Round Trip Time)</h2>
+                </section>
+
+                <section>
+                    <h3>What is 0-RTT?</h3>
+                    <p>0-RTT allows sending data with the first packet of a resumed connection</p>
+                    <div class="security-vs-latency">
+                        <div>
+                            <h4>Advantages:</h4>
+                            <ul class="small-text">
+                                <li>Reduced latency</li>
+                                <li>Improved user experience</li>
+                                <li>Network efficiency</li>
+                                <li>Connection multiplexing</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="highlight-red">Security Trade-offs:</h4>
+                            <ul class="small-text">
+                                <li>Replay attacks possible</li>
+                                <li>Limited forward secrecy</li>
+                                <li>Server policy restrictions</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>0-RTT Client Support</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Client/Library</th>
+                                <th>Language</th>
+                                <th>0-RTT Support</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>curl + ngtcp2</td>
+                                <td>C</td>
+                                <td class="highlight-green">✅ Yes</td>
+                                <td>Full support since 7.77+</td>
+                            </tr>
+                            <tr>
+                                <td>Chromium/Chrome</td>
+                                <td>C++</td>
+                                <td class="highlight-green">✅ Yes</td>
+                                <td>With retry protections</td>
+                            </tr>
+                            <tr>
+                                <td>Java: Netty/Jetty</td>
+                                <td>Java</td>
+                                <td class="highlight-yellow">🟡 Planned</td>
+                                <td>Not stable yet</td>
+                            </tr>
+                            <tr>
+                                <td>Java: Kwik/Flupke</td>
+                                <td>Java</td>
+                                <td class="highlight-red">❌ No</td>
+                                <td>No session resumption</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- QPACK -->
+            <section>
+                <section>
+                    <h2>🗜️ QPACK (RFC 9204)</h2>
+                    <p>Header compression for HTTP/3</p>
+                </section>
+
+                <section>
+                    <h3>QPACK vs HPACK</h3>
+                    <div class="security-vs-latency">
+                        <div>
+                            <h4>HPACK (HTTP/2)</h4>
+                            <ul class="small-text">
+                                <li>Head-of-line blocking in headers</li>
+                                <li>Sequential updates required</li>
+                                <li>Single compression context</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4>QPACK (HTTP/3)</h4>
+                            <ul class="small-text">
+                                <li>Separate streams for table updates</li>
+                                <li>Headers can flow independently</li>
+                                <li>Dynamic table on separate stream</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>📊 Static vs Dynamic Tables</h3>
+                    <ul>
+                        <li><strong>Static Table:</strong> Fixed common headers (`:method: GET`, `:scheme: https`)</li>
+                        <li><strong>Dynamic Table:</strong> Runtime custom headers
+                            <ul class="small-text">
+                                <li>Cookie values</li>
+                                <li>Authorization tokens</li>
+                                <li>Custom headers</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>QPACK Implementation Status</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Library</th>
+                                <th>Lang</th>
+                                <th>Dynamic QPACK</th>
+                                <th>Maturity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>nghttp3/ngtcp2</td>
+                                <td>C</td>
+                                <td class="highlight-green">✅ Full</td>
+                                <td>Production</td>
+                            </tr>
+                            <tr>
+                                <td>quiche</td>
+                                <td>Rust</td>
+                                <td class="highlight-green">✅ Full</td>
+                                <td>Production</td>
+                            </tr>
+                            <tr>
+                                <td>Netty HTTP/3</td>
+                                <td>Java</td>
+                                <td class="highlight-yellow">🟡 Partial</td>
+                                <td>Experimental</td>
+                            </tr>
+                            <tr>
+                                <td>Kwik/Flupke</td>
+                                <td>Java</td>
+                                <td class="highlight-red">❌ None</td>
+                                <td>Experimental</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </section>
+
+            <!-- Benchmarking -->
+            <section>
+                <section>
+                    <h1>📊 Benchmarking</h1>
+                    <h3>HTTP/3 vs HTTP/2 Performance</h3>
+                </section>
+
+                <section>
+                    <h3>🌐 Cloudflare Real-World Results</h3>
+                    <div class="progress-comparison">
+                        <h4>Time to First Byte (TTFB)</h4>
+                        <div style="margin: 1rem 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>HTTP/2: 201ms</span>
+                                <span class="highlight-red">Baseline</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%;">HTTP/2</div>
+                            </div>
+                        </div>
+                        <div style="margin: 1rem 0;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span>HTTP/3: 176ms</span>
+                                <span class="highlight-green">12.4% faster ✅</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 70%;">HTTP/3</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-card fragment">
+                        <h4>📱 Mobile Networks (15% packet loss)</h4>
+                        <p class="large-text highlight-green">HTTP/3: 55% faster page loads</p>
+                        <p class="small-text">Tested on 4G networks with realistic packet loss</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>🌍 Global Performance</h3>
+                    <ul>
+                        <li><strong>Intercontinental (US East → Germany):</strong>
+                            <span class="highlight-green">25% faster downloads</span>
+                        </li>
+                        <li><strong>Unstable mobile networks:</strong>
+                            <span class="highlight-green">52% faster downloads</span>
+                        </li>
+                        <li><strong>High latency + packet loss:</strong>
+                            <span class="highlight-green">40-55% improvement</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>📺 Akamai Streaming Results</h3>
+                    <div class="fragment">
+                        <p><strong>European football streaming event</strong></p>
+                        <p>Threshold: ≥5 Mbps (Full HD per Netflix)</p>
+                        <div class="security-vs-latency">
+                            <div>
+                                <h4>HTTP/2</h4>
+                                <p>56% connections ≥5 Mbps</p>
+                            </div>
+                            <div>
+                                <h4>HTTP/3</h4>
+                                <p class="highlight-green">69% connections ≥5 Mbps</p>
+                            </div>
+                        </div>
+                        <p class="highlight-green">+13 percentage points (~23% more connections meet Full HD threshold)</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>📈 Performance by Scenario</h3>
+                    <table class="performance-table">
+                        <thead>
+                            <tr>
+                                <th>Scenario</th>
+                                <th>Conditions</th>
+                                <th>HTTP/3 vs HTTP/2</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ideal</td>
+                                <td>&lt;10ms RTT, 0% loss</td>
+                                <td class="highlight-yellow">5-10% faster</td>
+                            </tr>
+                            <tr>
+                                <td>High Latency</td>
+                                <td>&gt;100ms RTT</td>
+                                <td class="highlight-green">20-25% faster</td>
+                            </tr>
+                            <tr>
+                                <td>Packet Loss</td>
+                                <td>5-15% loss</td>
+                                <td class="highlight-green">40-55% faster</td>
+                            </tr>
+                            <tr>
+                                <td>Connection Migration</td>
+                                <td>WiFi → 4G</td>
+                                <td class="highlight-green">&lt;100ms vs 2-5s</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section>
+                    <h3>⚖️ Production Trade-offs</h3>
+                    <div class="security-vs-latency">
+                        <div class="feature-card">
+                            <h4><span class="status-badge status-success">✅ HTTP/3 Dominates</span></h4>
+                            <ul class="small-text">
+                                <li><strong>High latency</strong> (&gt;50ms RTT)</li>
+                                <li><strong>Packet loss</strong> (&gt;1%)</li>
+                                <li><strong>Mobile networks</strong> (4G/5G)</li>
+                                <li><strong>Network switching</strong> (WiFi ↔ LTE)</li>
+                                <li><strong>Frequent reconnections</strong> (0-RTT)</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4><span class="status-badge status-warning">⚖️ HTTP/2 Still Competitive</span></h4>
+                            <ul class="small-text">
+                                <li><strong>Perfect conditions</strong> (&lt;10ms RTT, 0% loss)</li>
+                                <li><strong>Very small transfers</strong> (&lt;10KB)</li>
+                                <li><strong>Legacy systems</strong> (limited CPU/RAM)</li>
+                                <li><strong>Network restrictions</strong> (UDP 443 blocked)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <blockquote class="fragment">
+                        <strong>☕ Java Developer Takeaway:</strong> HTTP/3 is ideal for modern microservices, cloud-native applications, and mobile-first architectures.
+                    </blockquote>
+                </section>
+            </section>
+
+            <!-- Where to Use -->
+            <section>
+                <section>
+                    <h2>🎯 Where to Use HTTP/3</h2>
+                </section>
+
+                <section>
+                    <h3>📊 Production Adoption (2024-2025)</h3>
+                    <ul>
+                        <li>Cloudflare: ~25% traffic on HTTP/3</li>
+                        <li>Google: ~30% traffic on HTTP/3</li>
+                        <li>Facebook/Meta: ~20% traffic on HTTP/3</li>
+                        <li>CDN77: ~15% traffic on HTTP/3</li>
+                    </ul>
+                    <p class="highlight-green">Trend: +5-10% annual growth</p>
+                </section>
+
+                <section>
+                    <h3>🌐 Browser Support</h3>
+                    <ul>
+                        <li><span class="highlight-green">Chrome/Edge:</span> ✅ Default enabled (&gt;95% users)</li>
+                        <li><span class="highlight-green">Firefox:</span> ✅ Default enabled (&gt;90% users)</li>
+                        <li><span class="highlight-green">Safari:</span> ✅ Default enabled (&gt;85% users)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>🏆 Golden Rules</h3>
+                    <div class="security-vs-latency">
+                        <div>
+                            <h4 class="highlight-green">Use HTTP/3 when:</h4>
+                            <ul class="small-text">
+                                <li>High RTT (&gt;50ms)</li>
+                                <li>Packet loss (&gt;1%)</li>
+                                <li>Mobile networks</li>
+                                <li>Network switching during sessions</li>
+                                <li>Frequent reconnections</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="highlight-yellow">Stick with HTTP/2 when:</h4>
+                            <ul class="small-text">
+                                <li>Perfect conditions (&lt;10ms RTT, 0% loss)</li>
+                                <li>Very small transfers</li>
+                                <li>Resource-constrained devices</li>
+                                <li>UDP 443 blocked</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Conclusion -->
+            <section>
+                <h2 class="color1">🎯 Key Takeaways for Java Developers</h2>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4 class="color1">📈 Performance Wins</h4>
+                        <p><strong>15-50% improvement</strong> in real-world scenarios</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color2">☕ Java Ecosystem Ready</h4>
+                        <p>Spring Boot 3.4, Netty, JDK 26 support</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color3">🌐 Mobile-First</h4>
+                        <p>Perfect for modern distributed systems</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color4">🔐 Security + Speed</h4>
+                        <p>Finally solving the eternal trade-off!</p>
+                    </div>
+                </div>
+                <div class="break-card fragment" style="margin-top: 2rem;">
+                    <h4>🎉 JDD 2025 Breakthrough</h4>
+                    <p class="large-text">The security vs latency trade-off is being <strong>resolved</strong> by QUIC! ☕</p>
+                </div>
+            </section>
+
+            <!-- Thank You -->
+            <section class="title-slide">
+                <h1 class="color1">Thank You!</h1>
+                <h2 class="color2">Questions & Discussion</h2>
+                <div class="feature-grid" style="margin-top: 3rem;">
+                    <div class="feature-card">
+                        <h4 class="color1">🔗 Resources</h4>
+                        <ul class="small-text">
+                            <li><a href="https://blog.cloudflare.com">Cloudflare Blog</a></li>
+                            <li><a href="https://quicwg.org/">IETF QUIC Working Group</a></li>
+                            <li><a href="https://developer.chrome.com/blog">Chrome Dev Blog</a></li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color2">☕ Try It Now</h4>
+                        <ul class="small-text">
+                            <li>Spring Boot 3.4 + Netty</li>
+                            <li>JDK 26 early access</li>
+                            <li>Jetty 10.0.8+ experimental</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="break-card" style="margin-top: 2rem;">
+                    <p class="large-text speaker-name">Happy coding from JDD 2025! 🚀</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="node_modules/reveal.js/dist/reveal.js"></script>
+    <script src="node_modules/reveal.js/plugin/notes/notes.js"></script>
+    <script src="node_modules/reveal.js/plugin/markdown/markdown.js"></script>
+    <script src="node_modules/reveal.js/plugin/highlight/highlight.js"></script>
+    <script src="node_modules/katex/dist/katex.min.js"></script>
+
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            controls: true,
+            progress: true,
+            slideNumber: 'c/t',
+            showSlideNumber: 'all',
+            plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ],
+
+
+        });
+
+        // Update slide number in footer
+        Reveal.on('slidechanged', event => {
+            const slideNumber = document.querySelector('.jdd-footer .slide-number');
+            const current = Reveal.getIndices().h + 1;
+            const total = Reveal.getTotalSlides();
+            slideNumber.textContent = `${current} / ${total}`;
+        });
+
+        // Initialize slide number
+        Reveal.on('ready', event => {
+            const slideNumber = document.querySelector('.jdd-footer .slide-number');
+            const current = 1;
+            const total = Reveal.getTotalSlides();
+            slideNumber.textContent = `${current} / ${total}`;
+        });
+
+        // Render the Euler-Lagrange equation
+        document.addEventListener('DOMContentLoaded', function() {
+            const equation = `\\frac{d}{dt} \\left( \\frac{\\partial L}{\\partial \\dot{q}_i} \\right) - \\frac{\\partial L}{\\partial q_i} = 0`;
+            katex.render(equation, document.getElementById('euler-equation'), {
+                throwOnError: false,
+                displayMode: true
+            });
+        });
+    </script>
+</body>
+</html>

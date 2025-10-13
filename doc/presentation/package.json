@@ -1,0 +1,20 @@
+{
+  "name": "presentation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -p 8080 -c-1",
+    "dev": "http-server -p 8080 -c-1 -o",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "description": "",
+  "dependencies": {
+    "http-server": "^14.1.1",
+    "katex": "^0.16.25",
+    "reveal.js": "^5.2.1"
+  }
+}
