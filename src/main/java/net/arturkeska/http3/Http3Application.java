@@ -73,7 +73,6 @@ public class Http3Application {
 						.configure(builder -> builder.trustManager(InsecureTrustManagerFactory.INSTANCE));
 
 		return HttpClient.create(connectionProvider)
-				.wiretap(true)
 				// Use HTTP/3 protocol
 				.protocol(HttpProtocol.HTTP3)
 				.http3Settings(spec -> spec.idleTimeout(Duration.ofSeconds(5))

@@ -1343,8 +1343,14 @@
 
         /* Responsive typography */
         .small-text { 
-            font-size: 0.75em; /* Smaller */
+            font-size: 0.65em; /* Reduced from 0.75em */
             line-height: 1.3;
+        }
+        
+        .small-code-font {
+            font-size: 0.7em; /* Smaller than small-text */
+            line-height: 1.2;
+            font-family: 'Fira Code', 'Monaco', 'Menlo', monospace;
         }
         
         .large-text { 
@@ -1605,120 +1611,143 @@
                     <h2>How to Optimize HTTP?</h2>
                     <h3>The Evolution Journey</h3>
                 </section>
-                
-                <section>
-                    <h3>History of HTTP</h3>
-                    <ul>
-                        <li>HTTP/1.0 (1996) - Simple, inefficient</li>
-                        <li>HTTP/1.1 (1997) - Keep-alive, pipelining</li>
-                        <li>HTTP/2 (2015) - Multiplexing over TCP</li>
-                        <li>HTTP/3 (2022) - QUIC protocol, UDP-based</li>
-                    </ul>
-                </section>
 
                 <section>
                     <h3 class="color4">🔐 History of TLS: The Security Evolution</h3>
                     <table class="performance-table">
                         <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Version</th>
+                            <th>Key Events</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><strong>1994</strong></td>
+                            <td class="color6">SSL 1.0</td>
+                            <td>Internal Netscape draft (never released)</td>
+                            <td><span class="status-badge status-danger">❌ Never Released</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>1995</strong></td>
+                            <td class="color6">SSL 2.0</td>
+                            <td>First public version; insecure</td>
+                            <td><span class="status-badge status-danger">🚫 Deprecated</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>1996</strong></td>
+                            <td class="color3">SSL 3.0</td>
+                            <td>Major redesign; basis for TLS</td>
+                            <td><span class="status-badge status-warning">⚠️ Legacy</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>1999</strong></td>
+                            <td class="color2">TLS 1.0</td>
+                            <td>First IETF standard; replaces SSL</td>
+                            <td><span class="status-badge status-warning">🔄 Replaced</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2006</strong></td>
+                            <td class="color2">TLS 1.1</td>
+                            <td>Security fixes; low adoption</td>
+                            <td><span class="status-badge status-warning">📉 Low Adoption</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2008</strong></td>
+                            <td class="color1">TLS 1.2</td>
+                            <td>Becomes standard; strong crypto</td>
+                            <td><span class="status-badge status-success">✅ Widely Used</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>2018</strong></td>
+                            <td class="color1">TLS 1.3</td>
+                            <td>Modern secure, fast handshake</td>
+                            <td><span class="status-badge status-success">🚀 Current Standard</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Future</strong></td>
+                            <td class="color4">TLS 1.4</td>
+                            <td>Post-quantum and further refinements (TBD)</td>
+                            <td><span class="status-badge status-warning">🔮 In Development</span></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                </section>
+
+                <section>
+                    <h3 class="color1">🌐 History of HTTP: The Evolution Journey</h3>
+                    <table class="performance-table">
+                        <thead>
                             <tr>
                                 <th>Year</th>
                                 <th>Version</th>
-                                <th>Key Events</th>
+                                <th>Key Features & Improvements</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>1994</strong></td>
-                                <td class="color6">SSL 1.0</td>
-                                <td>Internal Netscape draft (never released)</td>
-                                <td><span class="status-badge status-danger">❌ Never Released</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>1995</strong></td>
-                                <td class="color6">SSL 2.0</td>
-                                <td>First public version; insecure</td>
+                                <td><strong>1996</strong></td>
+                                <td class="color6">HTTP/1.0</td>
+                                <td>Basic request-response, simple and inefficient</td>
                                 <td><span class="status-badge status-danger">🚫 Deprecated</span></td>
                             </tr>
                             <tr>
-                                <td><strong>1996</strong></td>
-                                <td class="color3">SSL 3.0</td>
-                                <td>Major redesign; basis for TLS</td>
-                                <td><span class="status-badge status-warning">⚠️ Legacy</span></td>
+                                <td><strong>1997</strong></td>
+                                <td class="color2">HTTP/1.1</td>
+                                <td>Keep-alive connections, pipelining support</td>
+                                <td><span class="status-badge status-warning">📉 Legacy</span></td>
                             </tr>
                             <tr>
-                                <td><strong>1999</strong></td>
-                                <td class="color2">TLS 1.0</td>
-                                <td>First IETF standard; replaces SSL</td>
-                                <td><span class="status-badge status-warning">🔄 Replaced</span></td>
+                                <td><strong>2012</strong></td>
+                                <td class="color3">Google QUIC</td>
+                                <td>First experiments with QUIC protocol</td>
+                                <td><span class="status-badge status-warning">🔬 Experimental</span></td>
                             </tr>
                             <tr>
-                                <td><strong>2006</strong></td>
-                                <td class="color2">TLS 1.1</td>
-                                <td>Security fixes; low adoption</td>
-                                <td><span class="status-badge status-warning">📉 Low Adoption</span></td>
-                            </tr>
-                            <tr>
-                                <td><strong>2008</strong></td>
-                                <td class="color1">TLS 1.2</td>
-                                <td>Becomes standard; strong crypto</td>
+                                <td><strong>2015</strong></td>
+                                <td class="color1">HTTP/2</td>
+                                <td>Multiplexing over TCP, server push</td>
                                 <td><span class="status-badge status-success">✅ Widely Used</span></td>
                             </tr>
                             <tr>
-                                <td><strong>2018</strong></td>
-                                <td class="color1">TLS 1.3</td>
-                                <td>Modern secure, fast handshake</td>
-                                <td><span class="status-badge status-success">🚀 Current Standard</span></td>
+                                <td><strong>2015</strong></td>
+                                <td class="color4">QUIC IETF</td>
+                                <td>QUIC standardization process begins</td>
+                                <td><span class="status-badge status-warning">📋 Standardization</span></td>
                             </tr>
                             <tr>
-                                <td><strong>Future</strong></td>
-                                <td class="color4">TLS 1.4</td>
-                                <td>Post-quantum and further refinements (TBD)</td>
-                                <td><span class="status-badge status-warning">🔮 In Development</span></td>
+                                <td><strong>2022</strong></td>
+                                <td class="color1">HTTP/3</td>
+                                <td>QUIC protocol (UDP-based), 0-RTT capability</td>
+                                <td><span class="status-badge status-success">🚀 Current Standard</span></td>
                             </tr>
                         </tbody>
                     </table>
                     
-                    <div class="fragment feature-grid" style="margin-top: 1rem;">
+                    <div class="feature-grid" style="margin-top: 1rem;">
                         <div class="feature-card">
-                            <h4 class="color1">🔐 TLS 1.2 → TLS 1.3 Improvements</h4>
+                            <h4 class="color1">🔄 HTTP Evolution Timeline</h4>
                             <ul class="small-text">
-                                <li><strong>1-RTT handshake</strong> vs 2-RTT</li>
-                                <li><strong>0-RTT resumption</strong> capability</li>
-                                <li><strong>Forward secrecy</strong> by default</li>
-                                <li><strong>Simplified cipher suites</strong></li>
+                                <li><strong>1996-1997:</strong> HTTP foundations</li>
+                                <li><strong>2012:</strong> Google QUIC experiments</li>
+                                <li><strong>2015:</strong> HTTP/2 + IETF QUIC</li>
+                                <li><strong>2022:</strong> HTTP/3 production ready</li>
                             </ul>
                         </div>
-                        <div class="fragment feature-card">
-                            <h4 class="color4">⚡ QUIC + TLS 1.3 Benefits</h4>
+                        <div class="feature-card">
+                            <h4 class="color4">⚡ Key Innovations</h4>
                             <ul class="small-text">
-                                <li><strong>Integrated encryption</strong> at transport layer</li>
-                                <li><strong>Reduced handshake latency</strong></li>
-                                <li><strong>Connection migration</strong> security</li>
-                                <li><strong>Stream-level encryption</strong></li>
+                                <li><strong>HTTP/1.1:</strong> Persistent connections</li>
+                                <li><strong>HTTP/2:</strong> Multiplexing over TCP</li>
+                                <li><strong>HTTP/3:</strong> QUIC (UDP) + 0-RTT</li>
+                                <li><strong>Future:</strong> Even better performance</li>
                             </ul>
                         </div>
                     </div>
-                    
-                    <div class="java-highlight">
-                        <h4 class="color5">☕ Java TLS Timeline</h4>
-                        <p><strong>Java 8:</strong> TLS 1.2 default → <strong>Java 11+:</strong> TLS 1.3 support → <strong>JDK 26:</strong> HTTP/3 with TLS 1.3</p>
-                    </div>
-                </section>
-            </section>
-
-            <!-- QUIC Story -->
-            <section>
-                <section>
-                    <h2>Quick Story about QUIC</h2>
-                </section>
-                
-                <section>
-                    <h3>QUIC Development</h3>
-                    <blockquote class="small-text">
-                        "The IETF formed a QUIC working group in 2016. Their charter was to take Google's web-specific implementation and adapt it to be a general-purpose transport protocol. The internals of Google QUIC looked very much like HTTP/2, but mixed in innovative ideas in transport and encryption."
-                    </blockquote>
-                    <p>Key innovation: <strong>Separating functionality into components</strong></p>
                 </section>
 
                 <section>
@@ -1727,7 +1756,9 @@
                     </div>
                 </section>
 
+
             </section>
+
 
             <!-- Who Uses QUIC -->
             <section>
@@ -1738,93 +1769,93 @@
                 <h3>🖥️ Servers</h3>
                 <table class="performance-table">
                     <thead>
-                        <tr>
-                            <th>Server</th>
-                            <th>Version</th>
-                            <th>HTTP/3 Status</th>
-                            <th>Production Ready</th>
-                        </tr>
+                    <tr>
+                        <th>Server</th>
+                        <th>Version</th>
+                        <th>HTTP/3 Status</th>
+                        <th>Production Ready</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>nginx</strong></td>
-                            <td>1.25.0+</td>
-                            <td><span class="status-badge status-success">✅ Full Support</span></td>
-                            <td>May 2023</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Netty</strong></td>
-                            <td>4.2.1.Final</td>
-                            <td><span class="status-badge status-success">✅ Full Support</span></td>
-                            <td>May 2025</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Jetty</strong></td>
-                            <td>10.0.8+</td>
-                            <td><span class="status-badge status-warning">🟡 Experimental</span></td>
-                            <td>Nov 2021</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Spring Boot</strong></td>
-                            <td>3.4+</td>
-                            <td><span class="status-badge status-success">✅ Netty-based</span></td>
-                            <td>Nov 2024</td>
-                        </tr>
-                        <tr>
-                            <td><strong>AWS/GCP</strong></td>
-                            <td>Cloud Native</td>
-                            <td><span class="status-badge status-success">✅ Production</span></td>
-                            <td>2023-2024</td>
-                        </tr>
+                    <tr>
+                        <td><strong>nginx</strong></td>
+                        <td>1.25.0+</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>May 2023</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Netty</strong></td>
+                        <td>4.2.1.Final</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>May 2025</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jetty</strong></td>
+                        <td>10.0.8+</td>
+                        <td><span class="status-badge status-warning">🟡 Experimental</span></td>
+                        <td>Nov 2021</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Spring Boot</strong></td>
+                        <td>3.4+</td>
+                        <td><span class="status-badge status-success">✅ Netty-based</span></td>
+                        <td>Nov 2024</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AWS/GCP</strong></td>
+                        <td>Cloud Native</td>
+                        <td><span class="status-badge status-success">✅ Production</span></td>
+                        <td>2023-2024</td>
+                    </tr>
                     </tbody>
                 </table>
             </section>
 
 
-                <section>
-                    <h3>📚 Client HTTP/3 Libraries</h3>
-                    <table class="performance-table">
-                        <thead>
-                            <tr>
-                                <th>QUICK</th>
-                                <th>HTTP3</th>
-                                <th>Language</th>
-                                <th>HTTP/3 Status</th>
-                                <th>Maturity</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="fragment">
-                                <td><strong>ngtcp2</strong></td>
-                                <td><strong>nghttp3</strong></td>
-                                <td>C</td>
-                                <td><span class="status-badge status-success">✅ Full Support</span></td>
-                                <td>Production</td>
-                            </tr>
-                            <tr class="fragment">
-                                <td><strong>quiche</strong></td>
-                                <td><strong>quiche (Cloudflare)</strong></td>
-                                <td>Rust</td>
-                                <td><span class="status-badge status-success">✅ Full Support</span></td>
-                                <td>Production</td>
-                            </tr>
-                            <tr class="fragment">
-                                <td><strong>Kwik</strong></td>
-                                <td><strong>Flupke</strong></td>
-                                <td>Java</td>
-                                <td><span class="status-badge status-success">✅ Full Support</span></td>
-                                <td>Experimental</td>
-                            </tr>
-                            <tr class="fragment">
-                                <td><strong>JDK HttpClient (JEP 517)</strong></td>
-                                <td><strong>JDK HttpClient (JEP 517)</strong></td>
-                                <td>Java</td>
-                                <td><span class="status-badge status-warning">🟡 In Progress</span></td>
-                                <td>JDK 26</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </section>
+            <section>
+                <h3>📚 Client HTTP/3 Libraries</h3>
+                <table class="performance-table">
+                    <thead>
+                    <tr>
+                        <th>QUICK</th>
+                        <th>HTTP3</th>
+                        <th>Language</th>
+                        <th>HTTP/3 Status</th>
+                        <th>Maturity</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="fragment">
+                        <td><strong>ngtcp2</strong></td>
+                        <td><strong>nghttp3</strong></td>
+                        <td>C</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>Production</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><strong>quiche</strong></td>
+                        <td><strong>quiche (Cloudflare)</strong></td>
+                        <td>Rust</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>Production</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><strong>Kwik</strong></td>
+                        <td><strong>Flupke</strong></td>
+                        <td>Java</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>Experimental</td>
+                    </tr>
+                    <tr class="fragment">
+                        <td><strong>JDK HttpClient (JEP 517)</strong></td>
+                        <td><strong>JDK HttpClient (JEP 517)</strong></td>
+                        <td>Java</td>
+                        <td><span class="status-badge status-warning">🟡 In Progress</span></td>
+                        <td>JDK 26</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
 
             <section>
                 <h3>📱 HTTP/3 Clients</h3>
@@ -1870,50 +1901,50 @@
                 <h3>☕ Client Java Ecosystem</h3>
                 <table class="performance-table">
                     <thead>
-                        <tr>
-                            <th>Framework</th>
-                            <th>Version</th>
-                            <th>Under the hood</th>
-                            <th>HTTP/3 Status</th>
-                            <th>Production Ready</th>
-                        </tr>
+                    <tr>
+                        <th>Framework</th>
+                        <th>Version</th>
+                        <th>Under the hood</th>
+                        <th>HTTP/3 Status</th>
+                        <th>Production Ready</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><strong>Spring Boot</strong></td>
-                            <td>3.4+</td>
-                            <td>Netty</td>
-                            <td><span class="status-badge status-success">✅ Netty-based</span></td>
-                            <td>Nov 2024</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Netty</strong></td>
-                            <td>4.2.1.Final</td>
-                            <td>Java (http3) Quic(Quiche)</td>
-                            <td><span class="status-badge status-success">✅ Full Support</span></td>
-                            <td>May 2025</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Jetty</strong></td>
-                            <td>10.0.8+</td>
-                            <td>Java (http3) Quic (Quiche)</td>
-                            <td><span class="status-badge status-warning">🟡 Experimental</span></td>
-                            <td>Nov 2021</td>
-                        </tr>
-                        <tr>
-                            <td><strong>Flupke</strong></td>
-                            <td>10.0.8+</td>
-                            <td>Java (http3) Kwik (Java)</td>
-                            <td><span class="status-badge status-success">✅ Full Support</span></td>
-                            <td>2016</td>
-                        </tr>
-                        <tr>
-                            <td><strong>JDK HttpClient</strong></td>
-                            <td>26 (JEP 517)</td>
-                            <td>Java</td>
-                            <td><span class="status-badge status-warning">🟡 In Progress</span></td>
-                            <td>Expected 2025</td>
-                        </tr>
+                    <tr>
+                        <td><strong>Spring Boot</strong></td>
+                        <td>3.4+</td>
+                        <td>Netty</td>
+                        <td><span class="status-badge status-success">✅ Netty-based</span></td>
+                        <td>Nov 2024</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Netty</strong></td>
+                        <td>4.2.1.Final</td>
+                        <td>Java (http3) Quic(Quiche)</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>May 2025</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Jetty</strong></td>
+                        <td>10.0.8+</td>
+                        <td>Java (http3) Quic (Quiche)</td>
+                        <td><span class="status-badge status-warning">🟡 Experimental</span></td>
+                        <td>Nov 2021</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Flupke</strong></td>
+                        <td>10.0.8+</td>
+                        <td>Java (http3) Kwik (Java)</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>2016</td>
+                    </tr>
+                    <tr>
+                        <td><strong>JDK HttpClient</strong></td>
+                        <td>26 (JEP 517)</td>
+                        <td>Java</td>
+                        <td><span class="status-badge status-warning">🟡 In Progress</span></td>
+                        <td>Expected 2025</td>
+                    </tr>
                     </tbody>
                 </table>
             </section>
@@ -1956,7 +1987,7 @@
                 <img src="res/jest.png">
                 <div class="fragment">22 Sep 2025 https://github.com/openjdk/jdk/pull/24751</div>
             </section>
-            
+
             <section>
                 <h3 class="color1">☕ Java Status (JDK 26 - Sep 2025)</h3>
                 <div class="security-vs-latency">
@@ -1987,12 +2018,49 @@
             </section>
 
 
-            <!-- Features -->
+
+            <!-- QUIC Story -->
             <section>
                 <section>
-                    <h2>Does It Work?</h2>
-                    <h3>Key Features Analysis</h3>
+                    <h1>Quick Story about QUIC</h1>
+                    <h3>Features</h3>
                 </section>
+
+                <section class="small-code-font">
+                    <pre>
+                         HTTP/2 (TCP + TLS)                           |               HTTP/3 (QUIC)
+──────────────────────────────────────────────────────────────────────┼───────────────────────────────────────────────
+Client                                                  Server        | Client                              Server
+  |                                                        |          |   |                                      |
+  | ── TCP SYN ──────────────────────────────────────────> |          |   | ── Initial Packet + TLS CH ───────>  | ①
+  |  <── TCP SYN-ACK ───────────────────────────────────── |          |   | <── Initial + Handshake ──────────   | ②
+  | ── TCP ACK ──────────────────────────────────────────> |          |   | ── Finished + HTTP Request ──────>   | ③
+  |                                                        |          |   | <── HTTP Response ───────────────    | ④
+  | ── TLS ClientHello ──────────────────────────────────> |          |   |                                      |
+  | <── TLS ServerHello + Cert + Handshake ─────────────   |          |   |    [QUIC streams established]        |
+  | ── TLS Finished ─────────────────────────────────────> |          |   | <===============================>    |
+  |                                                        |          |
+  | ── HTTP/2 Preface + SETTINGS ────────────────────────> |          |
+  | <── SETTINGS ACK ───────────────────────────────────   |          |
+  | ── HTTP Request ────────────────────────────────────>  |          |
+  | <── HTTP Response ─────────────────────────────────    |          |
+  |                                                        |          |
+
+
+ RTT Cost:
+ ─────────
+ • HTTP/2 (TLS 1.2): TCP (1 RTT) + TLS (1 RTT) = ~2 RTT before request
+ • HTTP/2 (TLS 1.3): TCP (1 RTT) + TLS (0.5 RTT) = ~1.5 RTT
+ • HTTP/3 (QUIC): Combined handshake = 1 RTT (first time), 0 RTT (resumed)
+
+                    </pre>
+                </section>
+
+
+
+
+            </section>
+
 
                 <!-- Connection Reuse -->
                 <section>

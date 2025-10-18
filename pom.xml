@@ -14,11 +14,11 @@
     <description>HTTP/3 client testing and analysis with Spring Boot and Jetty</description>
 
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
-        <maven.compiler.release>23</maven.compiler.release>
+        <maven.compiler.source>24</maven.compiler.source>
+        <maven.compiler.target>24</maven.compiler.target>
+        <maven.compiler.release>24</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>23</java.version>
+        <java.version>24</java.version>
         
         <!-- Spring Boot version -->
         <spring-boot.version>3.4.10</spring-boot.version>
