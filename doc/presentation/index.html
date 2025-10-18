@@ -58,8 +58,8 @@
         }
 
         .reveal .slides section.image-slide img {
-            max-width: 95vw;
-            max-height: 95vh;
+            max-width: 285vw; /* Tripled from 95vw */
+            max-height: 285vh; /* Tripled from 95vh */
             object-fit: contain;
             border-radius: 8px;
             box-shadow: 0 8px 32px rgba(233, 30, 99, 0.3);
@@ -510,7 +510,6 @@
         .metric-label {
             font-size: 0.7em;
             color: var(--cosmic-text-muted);
-            text-transform: uppercase;
             letter-spacing: 0.3px;
             font-weight: 600;
         }
@@ -544,7 +543,7 @@
 
         /* Cosmic equations */
         .equation {
-            font-size: 1.1em;
+            font-size: 3.3em; /* Tripled from 1.1em */
             margin: 1rem 0;
             text-align: center;
             background: rgba(26, 11, 46, 0.8);
@@ -674,6 +673,294 @@
             .metrics-grid {
                 gap: 0.6rem;
                 margin: 0.6rem 0;
+            }
+        }
+
+        /* ===== RTT DIAGRAM STYLES ===== */
+        .rtt-diagram {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: rgba(26, 11, 46, 0.9);
+            border-radius: 12px;
+            border: 2px solid var(--cosmic-fuchsia);
+            box-shadow: 0 0 30px rgba(233, 30, 99, 0.3);
+        }
+
+        .diagram-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .actor {
+            position: absolute;
+            top: 0;
+            width: 150px;
+        }
+
+        .actor.left {
+            left: 10%;
+        }
+
+        .actor.right {
+            right: 10%;
+        }
+
+        .actor-box {
+            background: linear-gradient(135deg, var(--cosmic-cyan), var(--cosmic-fuchsia));
+            border-radius: 8px;
+            padding: 8px 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--cosmic-moon);
+        }
+
+        .actor-box h4 {
+            margin: 0;
+            color: white;
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+
+        .actor-line {
+            width: 3px;
+            height: 350px;
+            background: linear-gradient(180deg, var(--cosmic-cyan) 0%, var(--cosmic-fuchsia) 100%);
+            margin: 10px auto 0;
+            border-radius: 2px;
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.5);
+        }
+
+        .message-flow {
+            position: relative;
+            height: 100%;
+        }
+
+        .message {
+            position: absolute;
+            width: 60%;
+            display: flex;
+            align-items: center;
+        }
+
+        .message.right-arrow {
+            left: 20%;
+        }
+
+        .message.left-arrow {
+            right: 20%;
+        }
+
+        .message-content {
+            background: rgba(38, 198, 218, 0.15);
+            border: 2px solid var(--cosmic-cyan);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-right: 10px;
+            box-shadow: 0 4px 15px rgba(38, 198, 218, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .message-content-left {
+            background: rgba(233, 30, 99, 0.15);
+            border: 2px solid var(--cosmic-fuchsia);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-left: 10px;
+            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .message-label {
+            font-weight: 700;
+            font-size: 0.85em;
+            color: var(--cosmic-text);
+            margin-bottom: 4px;
+        }
+
+        .message-details {
+            font-size: 0.7em;
+            line-height: 1.2;
+            color: var(--cosmic-text-muted);
+        }
+
+        .arrow-line {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cosmic-cyan), var(--cosmic-fuchsia));
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(233, 30, 99, 0.4);
+        }
+
+        .arrow-line.short {
+            flex: 0.5;
+        }
+
+        .arrow-line-left {
+            flex: 1;
+            height: 3px;
+            background: linear-gradient(90deg, var(--cosmic-fuchsia), var(--cosmic-cyan));
+            border-radius: 2px;
+            box-shadow: 0 0 8px rgba(233, 30, 99, 0.4);
+        }
+
+        .arrow-head {
+            width: 0;
+            height: 0;
+            border-left: 12px solid var(--cosmic-fuchsia);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            filter: drop-shadow(0 0 5px rgba(233, 30, 99, 0.6));
+        }
+
+        .arrow-head-left {
+            width: 0;
+            height: 0;
+            border-right: 12px solid var(--cosmic-fuchsia);
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            filter: drop-shadow(0 0 5px rgba(233, 30, 99, 0.6));
+        }
+
+        .performance-indicator {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .performance-box {
+            background: linear-gradient(135deg, var(--cosmic-nebula), var(--cosmic-dark-purple));
+            border: 2px solid var(--cosmic-moon);
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-align: center;
+            box-shadow: 0 0 25px rgba(255, 213, 79, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .performance-box h4 {
+            color: var(--cosmic-moon);
+            margin: 0 0 8px 0;
+            font-size: 0.9em;
+            text-shadow: 0 0 8px rgba(255, 213, 79, 0.6);
+        }
+
+        .performance-box p {
+            margin: 4px 0;
+            font-size: 0.75em;
+            line-height: 1.2;
+        }
+
+        /* ===== CODE TREE STRUCTURE STYLES ===== */
+        .code-tree {
+            background: rgba(26, 11, 46, 0.9);
+            border: 2px solid var(--cosmic-cyan);
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 1rem 0;
+            box-shadow: 0 0 20px rgba(38, 198, 218, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .tree-title {
+            color: var(--cosmic-cyan);
+            font-weight: 700;
+            font-size: 0.9em;
+            margin-bottom: 0.8rem;
+            text-align: center;
+            text-shadow: 0 0 8px rgba(38, 198, 218, 0.5);
+        }
+
+        .tree-structure {
+            background: var(--cosmic-deep-blue) !important;
+            border: 1px solid rgba(38, 198, 218, 0.3) !important;
+            border-radius: 8px !important;
+            margin: 0 !important;
+            padding: 1rem !important;
+            font-family: 'Fira Code', 'Monaco', 'Menlo', monospace !important;
+            font-size: 0.8em !important;
+            line-height: 1.4 !important;
+            overflow-x: auto;
+        }
+
+        .tree-structure code {
+            color: var(--cosmic-text) !important;
+            background: transparent !important;
+            padding: 0 !important;
+            font-family: inherit !important;
+        }
+
+        .tree-folder {
+            color: var(--cosmic-moon) !important;
+            font-weight: 600;
+            text-shadow: 0 0 5px rgba(255, 213, 79, 0.4);
+        }
+
+        .tree-comment {
+            color: var(--cosmic-light-purple) !important;
+            font-style: italic;
+            opacity: 0.8;
+        }
+
+        .tree-legend {
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid rgba(38, 198, 218, 0.2);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0.3rem 0;
+            font-size: 0.75em;
+        }
+
+        .legend-icon {
+            margin-right: 0.5rem;
+            font-size: 1.1em;
+        }
+
+        .legend-text {
+            color: var(--cosmic-text-muted);
+        }
+
+        /* ===== CENTERED IMAGE STYLES ===== */
+        .centered-image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 2rem 0;
+            padding: 1rem;
+        }
+
+        .centered-image img {
+            max-width: 70%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(233, 30, 99, 0.3);
+            border: 2px solid rgba(233, 30, 99, 0.2);
+            object-fit: contain;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .centered-image img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 40px rgba(233, 30, 99, 0.4);
+        }
+
+        /* Responsive behavior for centered images */
+        @media (max-width: 768px) {
+            .centered-image img {
+                max-width: 90%;
+            }
+        }
+
+        @media (max-height: 600px) {
+            .centered-image img {
+                max-width: 60%;
             }
         }
         :root {
@@ -970,7 +1257,6 @@
         .metric-label {
             font-size: 0.7em; /* Smaller font */
             color: var(--jdd-text-muted);
-            text-transform: uppercase;
             letter-spacing: 0.3px;
             font-weight: 600;
         }
@@ -1003,7 +1289,7 @@
 
         /* Compact equations */
         .equation {
-            font-size: 1.1em; /* Reduced font size */
+            font-size: 3.3em; /* Tripled from 1.1em */
             margin: 1rem 0; /* Reduced margin */
             text-align: center;
             background: var(--jdd-card-bg);
@@ -1190,38 +1476,48 @@
         </div>
 
         <div class="slides">
-            
-            <!-- Title Slide -->
-            <section class="title-slide">
-                <h1>HTTP/3 & QUIC</h1>
-                <h2 class="color2">Security vs Latency Trade-offs</h2>
-                <div style="margin: 2rem 0;">
-                    <p class="large-text">Optimizing Web Performance in the Modern Internet</p>
-                </div>
-                <div class="feature-grid" style="margin-top: 3rem;">
-                    <div class="feature-card">
-                        <h4 class="color1">🚀 Performance</h4>
-                        <p>15-55% faster in real-world scenarios</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4 class="color2">☕ Java Ready</h4>
-                        <p>JDK 26, Netty, Jetty, Spring Boot 3.4</p>
-                    </div>
-                    <div class="feature-card">
-                        <h4 class="color4">🔐 Security</h4>
-                        <p>TLS 1.3, 0-RTT, improved encryption</p>
-                    </div>
-                </div>
-            </section>
+
 
             <!-- Euler-Lagrange Equation -->
             <section>
-                <h2>The Rule of Optimization</h2>
                 <div class="equation">
-                    <p>Euler-Lagrange Equation:</p>
                     <div id="euler-equation"></div>
                 </div>
                 <p class="fragment">The fundamental principle behind all optimization problems</p>
+            </section>
+
+            <!-- Speaker Introduction -->
+            <section class="title-slide">
+                <h1 class="color1">Speaker Introduction</h1>
+                <div style="margin: 2rem 0;">
+                    <h2 class="color2">me my self and I</h2>
+                    <h3 class="color3">Poznań JUG Community Leader</h3>
+                </div>
+                <div class="feature-grid" style="margin-top: 3rem;">
+                    <div class="feature-card">
+                        <h4 class="color1">🏛️ Poznań JUG</h4>
+                        <p>Leading the Java User Group community in Poznań</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color2">☕ Java Expert</h4>
+                        <p>Deep expertise in modern Java technologies</p>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="color4">🚀 HTTP/3 Research</h4>
+                        <p>Practical implementation and performance analysis</p>
+                    </div>
+                </div>
+                <div class="java-highlight" style="margin-top: 2rem;">
+                    <h4 class="color5">🎤 JDD 2025 Presentation</h4>
+                    <p class="large-text">Bringing cutting-edge HTTP/3 insights to the Java community</p>
+                </div>
+            </section>
+
+
+            <!-- Security vs Latency Diagram -->
+            <section class="image-slide">
+                <img src="res/latency-vs-security.jpg" alt="Security vs Latency Trade-offs">
+                <div class="image-caption">Security vs Latency: The Eternal Developer Challenge</div>
             </section>
 
             <!-- Security vs Latency -->
@@ -1241,21 +1537,27 @@
                         <div class="metric-label">Annual Growth</div>
                     </div>
                     <div class="metric-card">
-                        <div class="metric-value color4">$215B</div>
+                        <div class="metric-value color4">$340B</div>
                         <div class="metric-label">Gartner 2025 Forecast</div>
                     </div>
                 </div>
-                <div class="java-highlight">
-                    <h4 class="color5">⚡ Key Insight</h4>
-                    <p>Every millisecond matters: <strong><a href="https://gist.github.com/jboner/2841832">Latency Numbers Every Programmer Should Know</a></strong> (Jeff Dean)</p>
+                <h4 class="color5">⚡ IEA Electricity 2024 for IP networks</h4>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value color3">2022</div>
+                        <div class="metric-label">260 TWh</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value color4">2026 forecast</div>
+                        <div class="metric-label">~330 THh</div>
+                    </div>
+                    <div class="fragment metric-card">
+                        <div class="metric-value color4">🇮🇪 Ireland 2023</div>
+                        <div class="metric-label">33 THh</div>
+                    </div>
                 </div>
             </section>
 
-            <!-- Security vs Latency Diagram -->
-            <section class="image-slide">
-                <img src="res/latency-vs-security.jpg" alt="Security vs Latency Trade-offs">
-                <div class="image-caption">Security vs Latency: The Eternal Developer Challenge</div>
-            </section>
 
             <!-- Business Demands -->
             <section>
@@ -1284,20 +1586,18 @@
                     <div class="large-text color1">
                         The eternal Java developer challenge: <strong>Latency ↔ Security</strong>
                     </div>
-                    <p class="fragment small-text color2">Can HTTP/3 solve both? Let's find out! ☕</p>
                 </div>
             </section>
 
             <!-- Business Demands Illustrations -->
             <section class="image-slide">
-                <img src="res/hophophop.jpeg" alt="Business Performance Demands">
-                <div class="image-caption">🚀 Performance First: Business Speed Requirements</div>
+                <div style="margin-top: 20%">
+                    <img src="res/hop2.jpeg" width="20%" alt="Business Performance Demands">
+                    <img class="fragment" width="20%" src="res/acountant.jpg" alt="Cost of Security and Performance">
+                    <img class="fragment" width="20%" src="res/sonnic.jpg" alt="ASAP">
+                </div>
             </section>
 
-            <section class="image-slide">
-                <img src="res/acountant.jpg" alt="Cost of Security and Performance">
-                <div class="image-caption">💰 The Cost Factor: Balancing Security Investment vs Performance</div>
-            </section>
 
             <!-- HTTP Evolution -->
             <section>
@@ -1379,7 +1679,7 @@
                         </tbody>
                     </table>
                     
-                    <div class="feature-grid" style="margin-top: 1rem;">
+                    <div class="fragment feature-grid" style="margin-top: 1rem;">
                         <div class="feature-card">
                             <h4 class="color1">🔐 TLS 1.2 → TLS 1.3 Improvements</h4>
                             <ul class="small-text">
@@ -1389,7 +1689,7 @@
                                 <li><strong>Simplified cipher suites</strong></li>
                             </ul>
                         </div>
-                        <div class="feature-card">
+                        <div class="fragment feature-card">
                             <h4 class="color4">⚡ QUIC + TLS 1.3 Benefits</h4>
                             <ul class="small-text">
                                 <li><strong>Integrated encryption</strong> at transport layer</li>
@@ -1420,104 +1720,272 @@
                     </blockquote>
                     <p>Key innovation: <strong>Separating functionality into components</strong></p>
                 </section>
+
+                <section>
+                    <div class="centered-image">
+                        <img src="res/http2-vs-http3.jpg" width="60%">
+                    </div>
+                </section>
+
             </section>
 
             <!-- Who Uses QUIC -->
             <section>
-                <section>
-                    <h2>Who Uses QUIC?</h2>
-                </section>
-                
-                <section>
-                    <h3>🖥️ Servers</h3>
-                    <ul>
-                        <li><span class="highlight-green">nginx</span> - since 1.25.0 (May 2023)</li>
-                        <li><span class="highlight-green">Netty</span> - since 4.2.1.Final (May 2025)</li>
-                        <li><span class="highlight-green">Jetty</span> - since jetty-10.0.8</li>
-                        <li><span class="highlight-green">Spring Boot 3.4</span> - (November 21, 2024)</li>
-                        <li><span class="highlight-green">AWS/GCP</span> - Production support</li>
-                    </ul>
-                </section>
+                <h2>Who Uses QUIC?</h2>
+            </section>
+
+            <section>
+                <h3>🖥️ Servers</h3>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Server</th>
+                            <th>Version</th>
+                            <th>HTTP/3 Status</th>
+                            <th>Production Ready</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>nginx</strong></td>
+                            <td>1.25.0+</td>
+                            <td><span class="status-badge status-success">✅ Full Support</span></td>
+                            <td>May 2023</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Netty</strong></td>
+                            <td>4.2.1.Final</td>
+                            <td><span class="status-badge status-success">✅ Full Support</span></td>
+                            <td>May 2025</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jetty</strong></td>
+                            <td>10.0.8+</td>
+                            <td><span class="status-badge status-warning">🟡 Experimental</span></td>
+                            <td>Nov 2021</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spring Boot</strong></td>
+                            <td>3.4+</td>
+                            <td><span class="status-badge status-success">✅ Netty-based</span></td>
+                            <td>Nov 2024</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AWS/GCP</strong></td>
+                            <td>Cloud Native</td>
+                            <td><span class="status-badge status-success">✅ Production</span></td>
+                            <td>2023-2024</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
 
                 <section>
-                    <h3>☕ Java Ecosystem</h3>
+                    <h3>📚 Client HTTP/3 Libraries</h3>
                     <table class="performance-table">
                         <thead>
                             <tr>
-                                <th>Framework</th>
-                                <th>Version</th>
+                                <th>QUICK</th>
+                                <th>HTTP3</th>
+                                <th>Language</th>
                                 <th>HTTP/3 Status</th>
-                                <th>Production Ready</th>
+                                <th>Maturity</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>Spring Boot</strong></td>
-                                <td>3.4+</td>
-                                <td><span class="status-badge status-success">✅ Netty-based</span></td>
-                                <td>Nov 2024</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Netty</strong></td>
-                                <td>4.2.1.Final</td>
+                            <tr class="fragment">
+                                <td><strong>ngtcp2</strong></td>
+                                <td><strong>nghttp3</strong></td>
+                                <td>C</td>
                                 <td><span class="status-badge status-success">✅ Full Support</span></td>
-                                <td>May 2025</td>
+                                <td>Production</td>
                             </tr>
-                            <tr>
-                                <td><strong>Jetty</strong></td>
-                                <td>10.0.8+</td>
-                                <td><span class="status-badge status-warning">🟡 Experimental</span></td>
-                                <td>Nov 2021</td>
+                            <tr class="fragment">
+                                <td><strong>quiche</strong></td>
+                                <td><strong>quiche (Cloudflare)</strong></td>
+                                <td>Rust</td>
+                                <td><span class="status-badge status-success">✅ Full Support</span></td>
+                                <td>Production</td>
                             </tr>
-                            <tr>
-                                <td><strong>JDK HttpClient</strong></td>
-                                <td>26 (JEP 517)</td>
+                            <tr class="fragment">
+                                <td><strong>Kwik</strong></td>
+                                <td><strong>Flupke</strong></td>
+                                <td>Java</td>
+                                <td><span class="status-badge status-success">✅ Full Support</span></td>
+                                <td>Experimental</td>
+                            </tr>
+                            <tr class="fragment">
+                                <td><strong>JDK HttpClient (JEP 517)</strong></td>
+                                <td><strong>JDK HttpClient (JEP 517)</strong></td>
+                                <td>Java</td>
                                 <td><span class="status-badge status-warning">🟡 In Progress</span></td>
-                                <td>Expected 2025</td>
+                                <td>JDK 26</td>
                             </tr>
                         </tbody>
                     </table>
                 </section>
 
-                <section>
-                    <h3 class="color1">☕ Java Status (JDK 26 - Sep 2025)</h3>
-                    <div class="security-vs-latency">
-                        <div class="feature-card">
-                            <h4><span class="status-badge status-success">✅ Production Ready</span></h4>
-                            <ul class="small-text">
-                                <li><span class="color2">Basic QUIC implementation</span></li>
-                                <li>HttpClient API integration</li>
-                                <li>TLS 1.3 support</li>
-                                <li>Basic HTTP/3 functionality</li>
-                            </ul>
-                        </div>
-                        <div class="feature-card">
-                            <h4><span class="status-badge status-warning">❌ Current Limitations</span></h4>
-                            <ul class="small-text">
-                                <li>No server-side implementation</li>
-                                <li>Only SunJSSE provider</li>
-                                <li>Experimental status</li>
-                                <li>Performance tuning in progress</li>
-                            </ul>
+            <section>
+                <h3>📱 HTTP/3 Clients</h3>
+                <table class="performance-table">
+                    <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Language</th>
+                        <th>HTTP/3 Status</th>
+                        <th>Production Ready</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><strong>Chrome/Chromium</strong></td>
+                        <td>C++</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>2020+</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Firefox</strong></td>
+                        <td>C++/Rust</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>2021+</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Safari</strong></td>
+                        <td>C++</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>2022+</td>
+                    </tr>
+                    <tr>
+                        <td><strong>curl</strong></td>
+                        <td>C</td>
+                        <td><span class="status-badge status-success">✅ Full Support</span></td>
+                        <td>7.66.0+</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h3>☕ Client Java Ecosystem</h3>
+                <table class="performance-table">
+                    <thead>
+                        <tr>
+                            <th>Framework</th>
+                            <th>Version</th>
+                            <th>Under the hood</th>
+                            <th>HTTP/3 Status</th>
+                            <th>Production Ready</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Spring Boot</strong></td>
+                            <td>3.4+</td>
+                            <td>Netty</td>
+                            <td><span class="status-badge status-success">✅ Netty-based</span></td>
+                            <td>Nov 2024</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Netty</strong></td>
+                            <td>4.2.1.Final</td>
+                            <td>Java (http3) Quic(Quiche)</td>
+                            <td><span class="status-badge status-success">✅ Full Support</span></td>
+                            <td>May 2025</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Jetty</strong></td>
+                            <td>10.0.8+</td>
+                            <td>Java (http3) Quic (Quiche)</td>
+                            <td><span class="status-badge status-warning">🟡 Experimental</span></td>
+                            <td>Nov 2021</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Flupke</strong></td>
+                            <td>10.0.8+</td>
+                            <td>Java (http3) Kwik (Java)</td>
+                            <td><span class="status-badge status-success">✅ Full Support</span></td>
+                            <td>2016</td>
+                        </tr>
+                        <tr>
+                            <td><strong>JDK HttpClient</strong></td>
+                            <td>26 (JEP 517)</td>
+                            <td>Java</td>
+                            <td><span class="status-badge status-warning">🟡 In Progress</span></td>
+                            <td>Expected 2025</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <div>
+                    <div class="code-tree">
+                        <div class="tree-title">🏗️ Jetty QUIC Module Structure</div>
+                        <pre class="tree-structure"><code>jetty-quic-quiche/
+├── jetty-quic-quiche-common     # Common interfaces and QuicheBinding
+├── jetty-quic-quiche-jna/       # JNA-based native bindings
+└── jetty-quic-quiche-foreign    # Foreign Function Interface (Java 22+)
+                        </code>
+                        </pre>
+                        <div class="tree-legend">
+                            <div class="legend-item">
+                                <span class="legend-icon">📁</span>
+                                <span class="legend-text">Core QUIC implementation modules</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon">🔗</span>
+                                <span class="legend-text">Native library bindings (Rust ↔ Java)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-icon">⚡</span>
+                                <span class="legend-text">Modern FFI for Java 22+</span>
+                            </div>
                         </div>
                     </div>
-                    <blockquote>
-                        <strong class="color4">JEP 517:</strong> <code>HttpClient</code> with HTTP/3 support expected in JDK 26
-                    </blockquote>
-                </section>
-
-                <!-- Java Ecosystem Ready -->
-                <section class="image-slide">
-                    <img src="res/jest.png" alt="Java HTTP/3 Ecosystem">
-                    <div class="image-caption">☕ Here We Go: Java HTTP/3 Ecosystem Ready!</div>
-                </section>
-
-                <!-- Java Ecosystem Ready -->
-                <section class="image-slide">
-                    <img src="res/jest.png" alt="Java HTTP/3 Ecosystem">
-                    <div class="image-caption">☕ Here We Go: Java HTTP/3 Ecosystem Ready!</div>
-                </section>
+                </div>
             </section>
+
+            <section>
+                <div class="centered-image">
+                    <img src="res/netty architecture.jpg" width="60%" alt="Netty Architecture Diagram">
+                </div>
+            </section>
+
+            <section>
+                <img src="res/jest.png">
+                <div class="fragment">22 Sep 2025 https://github.com/openjdk/jdk/pull/24751</div>
+            </section>
+            
+            <section>
+                <h3 class="color1">☕ Java Status (JDK 26 - Sep 2025)</h3>
+                <div class="security-vs-latency">
+                    <div class="feature-card">
+                        <h4><span class="status-badge status-success">✅ Production Ready</span></h4>
+                        <ul class="small-text">
+                            <li><span class="color2">Basic QUIC implementation</span></li>
+                            <li>HttpClient API integration</li>
+                            <li>TLS 1.3 support</li>
+                            <li>Basic HTTP/3 functionality</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4><span class="status-badge status-warning">❌ Current Limitations</span></h4>
+                        <ul class="small-text">
+                            <li>No server-side implementation</li>
+                            <li>Only SunJSSE provider</li>
+                            <li>Experimental status</li>
+                            <li>Performance tuning in progress</li>
+                        </ul>
+                    </div>
+                </div>
+                <dev class="fragment">
+                    <div class="centered-image">
+                        <span>#demo 1</span>
+                    </div>
+                </dev>
+            </section>
+
 
             <!-- Features -->
             <section>
@@ -1536,6 +2004,54 @@
                         <li>Maintaining connection state</li>
                     </ul>
                     <p class="fragment">HTTP/3 + 0-RTT = <strong>Instant reconnection</strong></p>
+                </section>
+
+                <section>
+                    <h3>🚀 0-RTT Protocol Flow</h3>
+                    <div class="centered-image">
+                        <img src="res/rtt-0-flow-diagram.jpg" width="60%"/>
+                    </div>
+                </section>
+
+                <!-- Implementation Status -->
+                <section>
+                    <h3>📊 Implementation Status</h3>
+                    <table class="performance-table">
+                        <thead>
+                        <tr>
+                            <th>Library/Client</th>
+                            <th>Language</th>
+                            <th>Multiplexing</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>ngtcp2 + nghttp3</td>
+                            <td>C</td>
+                            <td class="highlight-green">✅ Full</td>
+                            <td>Production</td>
+                        </tr>
+                        <tr>
+                            <td>quiche (Cloudflare)</td>
+                            <td>Rust</td>
+                            <td class="highlight-green">✅ Full</td>
+                            <td>Production</td>
+                        </tr>
+                        <tr>
+                            <td>curl</td>
+                            <td>C</td>
+                            <td class="highlight-green">✅ Full</td>
+                            <td>Production</td>
+                        </tr>
+                        <tr>
+                            <td>Netty/Jetty (HTTP/3)</td>
+                            <td>Java</td>
+                            <td class="highlight-yellow">🟡 Partial</td>
+                            <td>Experimental</td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </section>
 
                 <!-- Multiplexing -->
@@ -1561,7 +2077,13 @@
                     </div>
                 </section>
 
-                <!-- Implementation Status -->
+                <section>
+                    <div class="centered-image">
+                        <img src="res/multiplexing-diagram.png" width="60%">
+                    </div>
+                </section>
+
+                <!-- Implementation Status multiplexing -->
                 <section>
                     <h3>📊 Implementation Status</h3>
                     <table class="performance-table">
@@ -1598,79 +2120,17 @@
                                 <td class="highlight-yellow">🟡 Partial</td>
                                 <td>Experimental</td>
                             </tr>
+                            <tr>
+                                <td>JDK 26</td>
+                                <td>Java</td>
+                                <td class="highlight-green">✅🟡 implemented</td>
+                                <td>Milestone release</td>
+                            </tr>
                         </tbody>
                     </table>
-                </section>
-            </section>
-
-            <!-- 0-RTT -->
-            <section>
-                <section>
-                    <h2>🚀 0-RTT (Zero Round Trip Time)</h2>
-                </section>
-
-                <section>
-                    <h3>What is 0-RTT?</h3>
-                    <p>0-RTT allows sending data with the first packet of a resumed connection</p>
-                    <div class="security-vs-latency">
-                        <div>
-                            <h4>Advantages:</h4>
-                            <ul class="small-text">
-                                <li>Reduced latency</li>
-                                <li>Improved user experience</li>
-                                <li>Network efficiency</li>
-                                <li>Connection multiplexing</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 class="highlight-red">Security Trade-offs:</h4>
-                            <ul class="small-text">
-                                <li>Replay attacks possible</li>
-                                <li>Limited forward secrecy</li>
-                                <li>Server policy restrictions</li>
-                            </ul>
-                        </div>
+                    <div class="centered-image fragment">
+                        <span>#demo</span>
                     </div>
-                </section>
-
-                <section>
-                    <h3>0-RTT Client Support</h3>
-                    <table class="performance-table">
-                        <thead>
-                            <tr>
-                                <th>Client/Library</th>
-                                <th>Language</th>
-                                <th>0-RTT Support</th>
-                                <th>Notes</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>curl + ngtcp2</td>
-                                <td>C</td>
-                                <td class="highlight-green">✅ Yes</td>
-                                <td>Full support since 7.77+</td>
-                            </tr>
-                            <tr>
-                                <td>Chromium/Chrome</td>
-                                <td>C++</td>
-                                <td class="highlight-green">✅ Yes</td>
-                                <td>With retry protections</td>
-                            </tr>
-                            <tr>
-                                <td>Java: Netty/Jetty</td>
-                                <td>Java</td>
-                                <td class="highlight-yellow">🟡 Planned</td>
-                                <td>Not stable yet</td>
-                            </tr>
-                            <tr>
-                                <td>Java: Kwik/Flupke</td>
-                                <td>Java</td>
-                                <td class="highlight-red">❌ No</td>
-                                <td>No session resumption</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </section>
             </section>
 
@@ -1750,11 +2210,20 @@
                             <tr>
                                 <td>Kwik/Flupke</td>
                                 <td>Java</td>
-                                <td class="highlight-red">❌ None</td>
+                                <td class="highlight-red">🟡 Partial</td>
+                                <td>Experimental</td>
+                            </tr>
+                            <tr>
+                                <td>JDK 26</td>
+                                <td>Java</td>
+                                <td class="highlight-yellow">🟡 Partial</td>
                                 <td>Experimental</td>
                             </tr>
                         </tbody>
                     </table>
+                    <div class="centered-image fragment">
+                        <span>#demo</span>
+                    </div>
                 </section>
             </section>
 
