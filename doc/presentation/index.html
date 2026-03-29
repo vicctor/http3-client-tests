@@ -1497,12 +1497,12 @@
                 <h1 class="color1">Speaker Introduction</h1>
                 <div style="margin: 2rem 0;">
                     <h2 class="color2">me my self and I</h2>
-                    <h3 class="color3">Poznań JUG Community Leader</h3>
+                    <h3 class="color3">Poznań JUG Community</h3>
                 </div>
                 <div class="feature-grid" style="margin-top: 3rem;">
                     <div class="feature-card">
                         <h4 class="color1">🏛️ Poznań JUG</h4>
-                        <p>Leading the Java User Group community in Poznań</p>
+                        <p>Member of Java User Group community in Poznań</p>
                     </div>
                     <div class="feature-card">
                         <h4 class="color2">☕ Java Expert</h4>
@@ -1519,6 +1519,43 @@
                 </div>
             </section>
 
+            <section>
+                <pre>
+                    Latency Comparison Numbers (~2012)
+----------------------------------
+L1 cache reference                           0.5 ns
+Branch mispredict                            5   ns
+L2 cache reference                           7   ns                      14x L1 cache
+Mutex lock/unlock                           25   ns
+Main memory reference                      100   ns                      20x L2 cache, 200x L1 cache
+Compress 1K bytes with Zippy             3,000   ns        3 us
+Send 1K bytes over 1 Gbps network       10,000   ns       10 us
+Read 4K randomly from SSD*             150,000   ns      150 us          ~1GB/sec SSD
+Read 1 MB sequentially from memory     250,000   ns      250 us
+Round trip within same datacenter      500,000   ns      500 us
+Read 1 MB sequentially from SSD*     1,000,000   ns    1,000 us    1 ms  ~1GB/sec SSD, 4X memory
+Disk seek                           10,000,000   ns   10,000 us   10 ms  20x datacenter roundtrip
+Read 1 MB sequentially from disk    20,000,000   ns   20,000 us   20 ms  80x memory, 20X SSD
+Send packet CA->Netherlands->CA    150,000,000   ns  150,000 us  150 ms
+
+Notes
+-----
+1 ns = 10^-9 seconds
+1 us = 10^-6 seconds = 1,000 ns
+1 ms = 10^-3 seconds = 1,000 us = 1,000,000 ns
+
+Credit
+------
+By Jeff Dean:               http://research.google.com/people/jeff/
+Originally by Peter Norvig: http://norvig.com/21-days.html#answers
+
+Contributions
+-------------
+'Humanized' comparison:    https://gist.github.com/hellerbarde/2843375
+Visual comparison chart:   http://i.imgur.com/k0t1e.png
+Interactive Prezi version: https://prezi.com/pdkvgys-r0y6/latency-numbers-for-programmers-web-development/latency.txt
+                </pre>
+            </section>
 
             <!-- Security vs Latency Diagram -->
             <section class="image-slide">
@@ -1566,36 +1603,6 @@
                 </div>
             </section>
 
-
-            <!-- Business Demands -->
-            <section>
-                <h2 class="color1">What Developers Need</h2>
-                <div class="feature-grid">
-                    <div class="feature-card">
-                        <h4 class="color1">🚀 Performance First</h4>
-                        <ul class="small-text">
-                            <li>Sub-second response times</li>
-                            <li>High throughput under load</li>
-                            <li>Efficient resource utilization</li>
-                            <li>Mobile-friendly networking</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h4 class="color4">🔐 Security by Design</h4>
-                        <ul class="small-text">
-                            <li>End-to-end encryption</li>
-                            <li>Zero-trust architecture</li>
-                            <li>Compliance requirements</li>
-                            <li>Protection against attacks</li>
-                        </ul>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 2rem;">
-                    <div class="large-text color1">
-                        The eternal Java developer challenge: <strong>Latency ↔ Security</strong>
-                    </div>
-                </div>
-            </section>
 
             <!-- Business Demands Illustrations -->
             <section class="image-slide">
@@ -1827,7 +1834,7 @@ Client                                                  Server        | Client  
 
 
             <section>
-                <h3>📱 HTTP/3 Clients</h3>
+                <h3>📱 HTTP/3 Applications</h3>
                 <table class="performance-table">
                     <thead>
                     <tr>
@@ -1864,6 +1871,7 @@ Client                                                  Server        | Client  
                     </tr>
                     </tbody>
                 </table>
+                <div class="centered-image fragment">demo</div>
             </section>
 
 

@@ -1,0 +1,23 @@
+     time_namelookup:  %{time_namelookup}\n
+        time_connect:  %{time_connect}\n
+     time_appconnect:  %{time_appconnect}\n
+    time_pretransfer:  %{time_pretransfer}\n
+       time_redirect:  %{time_redirect}\n
+  time_starttransfer:  %{time_starttransfer}\n
+                     ----------\n
+          time_total:  %{time_total}\n
+                     ----------\n
+         size_header:  %{size_header}\n
+        size_request:  %{size_request}\n
+       size_download:  %{size_download}\n
+        size_upload:  %{size_upload}\n
+       speed_download:  %{speed_download}\n
+        speed_upload:  %{speed_upload}\n
+                     ----------\n
+        remote_ip:  %{remote_ip}\n
+       remote_port:  %{remote_port}\n
+        local_ip:  %{local_ip}\n
+       local_port:  %{local_port}\n
+                     ----------\n
+      http_version:  %{http_version}\n
+      response_code:  %{response_code}\n

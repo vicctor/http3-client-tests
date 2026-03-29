@@ -36,14 +36,14 @@ print_error() {
 }
 
 compile_example() {
-    echo -e "${BLUE}📝 Compiling HTTP3DebugExample...${NC}"
+    echo -e "${BLUE}📝 Compiling HTTP3QPACKExample...${NC}"
     
     # Create target directory if it doesn't exist
     mkdir -p target/classes
     
     # Compile the debug example
-    if javac -d target/classes src/main/java26/net/arturkeska/http3/HTTP3DebugExample.java; then
-        print_status "HTTP3DebugExample compiled successfully"
+    if javac -d target/classes src/main/java26/net/arturkeska/http3/HTTP3QPACKExample.java; then
+        print_status "HTTP3QPACKExample compiled successfully"
     else
         print_error "Compilation failed"
         exit 1
@@ -55,8 +55,8 @@ run_debug_test() {
     echo ""
     
     # Define key log file for detailed analysis
-    KEYLOGFILE=/tmp/http3_debug.key_log
-    #rm -f "${KEYLOGFILE}"
+    KEYLOGFILE=/tmp/http3_qpack.key_log
+    rm -f "${KEYLOGFILE}"
     
     # Java options for HTTP/3 with minimal debugging (clean output)
     JAVA_OPTS="-Djavax.net.ssl.keylog=${KEYLOGFILE} -Djdk.httpclient.debug=false -Djdk.internal.httpclient.quic.debug=false"
@@ -70,7 +70,7 @@ run_debug_test() {
     echo -e "${BLUE}Testing HTTP/3 connectivity across multiple servers...${NC}"
     echo "========================================================"
     
-    if java -cp target/classes ${JAVA_OPTS} net.arturkeska.http3.HTTP3DebugExample; then
+    if java -cp target/classes ${JAVA_OPTS} net.arturkeska.http3.HTTP3QPACKExample; then
         print_status "HTTP/3 debug test completed"
     else
         print_error "HTTP/3 debug test encountered issues (check output above)"
